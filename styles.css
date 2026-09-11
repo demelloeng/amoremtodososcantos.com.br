@@ -1,11 +1,8 @@
 :root {
   --azul: #202F53;
   --branco: #FBFEFD;
-  --cinza: #CAD0DD;
   --dourado: #E8CE8E;
-  --lilas: #7B6DA6;
   --pessego: #F1A48A;
-  --rosa: #DE709C;
 }
 
 * {
@@ -24,131 +21,183 @@ body {
   overflow-x: hidden;
 }
 
+a {
+  color: inherit;
+}
+
+/* ---------- HERO ---------- */
+
 .hero {
-  background: var(--azul);
-  color: var(--branco);
-  padding: 3.5rem 1.5rem 2.75rem;
+  background: radial-gradient(ellipse 130% 90% at 30% -10%, #2c3e6c 0%, #202F53 55%, #131c36 100%);
+  padding: 44px 24px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
 .hero__eyebrow {
-  margin: 0 0 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  margin: 0;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--dourado);
   text-transform: uppercase;
-  color: var(--cinza);
 }
 
 .hero__title {
-  margin: 0;
-  font-size: 2.75rem;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: 40px;
   line-height: 1.05;
-  color: var(--dourado);
-}
-
-.hero__subtitle {
-  margin: 0.9rem auto 0;
-  max-width: 32ch;
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.5;
+  letter-spacing: -0.5px;
+  margin: 18px 0 0;
   color: var(--branco);
-  opacity: 0.9;
 }
 
-main {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 2.25rem 1.25rem 3.5rem;
+.hero__title-accent {
+  color: var(--dourado);
+  font-weight: 500;
+  text-transform: lowercase;
 }
 
-.section-title {
-  margin: 0 0 1.25rem;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+.hero__break--mobile {
+  display: block;
+}
+
+.hero__author {
+  margin: 22px 0 0;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--branco);
+  opacity: 0.92;
   text-transform: uppercase;
+}
+
+.hero__images {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 38px;
+  width: 100%;
+}
+
+.hero__cover {
+  width: 44%;
+  max-width: 165px;
+  border-radius: 5px;
+  transform: rotate(-4deg);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.4);
+  display: block;
+}
+
+.hero__photo {
+  width: 48%;
+  max-width: 180px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 14px;
+  transform: rotate(3deg) translateY(14px);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.4);
+  display: block;
+}
+
+/* ---------- ONDE COMPRAR ---------- */
+
+.comprar {
+  background: var(--branco);
+  padding: 52px 24px 48px;
+}
+
+.comprar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.comprar__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 27px;
   color: var(--azul);
 }
 
 .cards {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 28px;
 }
 
 .card {
-  display: block;
-  position: relative;
-  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--azul);
   border-radius: 16px;
-  border: 1px solid var(--cinza);
-  background: var(--branco);
-  color: var(--azul);
+  padding: 20px 22px;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 10px 24px rgba(32, 47, 83, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card:hover,
 .card:focus-visible {
   transform: translateY(-2px);
-  border-color: var(--dourado);
-  box-shadow: 0 8px 24px rgba(32, 47, 83, 0.14);
+  box-shadow: 0 14px 30px rgba(32, 47, 83, 0.3);
 }
 
 .card:focus-visible {
-  outline: 3px solid var(--dourado);
+  outline: 2px solid var(--dourado);
   outline-offset: 3px;
 }
 
-.card--available {
-  cursor: pointer;
+.card__info {
+  display: flex;
+  flex-direction: column;
 }
 
 .card__channel {
-  margin: 0 0 0.15rem;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--branco);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .card__format {
-  margin: 0 0 0.9rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--lilas);
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--pessego);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: var(--azul);
+  text-transform: uppercase;
+  width: fit-content;
 }
 
-.card__footer {
+.card__deal {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .card__price {
-  font-size: 1.35rem;
   font-weight: 800;
-  color: var(--azul);
-}
-
-.card__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.1rem;
-  border-radius: 999px;
-  background: var(--dourado);
-  color: var(--azul);
-  font-size: 0.85rem;
-  font-weight: 700;
-  white-space: nowrap;
+  font-size: 20px;
+  color: var(--dourado);
 }
 
 .card__arrow {
+  font-size: 17px;
+  color: var(--branco);
   transition: transform 0.15s ease;
 }
 
@@ -157,40 +206,319 @@ main {
   transform: translateX(3px);
 }
 
-.card--pending {
-  cursor: default;
+/* ---------- SOBRE O AUTOR ---------- */
+
+.autor {
+  background: var(--azul);
+  padding: 60px 26px 64px;
+}
+
+.autor__inner {
+  max-width: 620px;
+}
+
+.autor__label {
+  margin: 0;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 3.5px;
+  color: var(--dourado);
+  text-transform: uppercase;
+}
+
+.autor__nome {
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.15;
+  color: var(--branco);
+  margin: 16px 0 0;
+}
+
+.autor__linha {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  color: var(--pessego);
+  margin: 10px 0 0;
+}
+
+.autor__bio {
+  font-family: "EB Garamond", Garamond, serif;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--branco);
+  opacity: 0.92;
+  margin: 22px 0 0;
+}
+
+/* ---------- ACOMPANHE FISSURA ---------- */
+
+.redes {
+  background: var(--azul);
+  padding: 46px 24px 52px;
+  text-align: center;
+}
+
+.redes__label {
+  margin: 0;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 3.5px;
+  color: var(--dourado);
+  text-transform: uppercase;
+}
+
+.redes__botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.redes__botao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--dourado);
+  color: var(--branco);
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.redes__botao:hover,
+.redes__botao:focus-visible {
+  background: rgba(232, 206, 142, 0.1);
+}
+
+.redes__botao:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 2px;
+}
+
+.redes__linha {
+  width: 32px;
+  height: 2px;
+  background: var(--pessego);
+  margin: 22px auto 0;
   opacity: 0.7;
 }
 
-.card--pending:hover,
-.card--pending:focus-visible {
-  transform: none;
-  border-color: var(--cinza);
-  box-shadow: none;
-}
+/* ---------- FOOTER ---------- */
 
-.card--pending .card__cta {
-  background: var(--cinza);
-  color: var(--azul);
-}
-
-footer {
-  padding: 1.5rem 1.25rem 2.5rem;
+.footer {
+  background: var(--branco);
+  padding: 22px 24px;
   text-align: center;
-  font-size: 0.75rem;
-  color: var(--lilas);
 }
 
-@media (min-width: 600px) {
+.footer__texto {
+  margin: 0;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--azul);
+  opacity: 0.55;
+}
+
+/* ---------- DESKTOP (1024px+) ---------- */
+
+@media (min-width: 1024px) {
+
   .hero {
-    padding: 4.5rem 2rem 3.5rem;
+    background: radial-gradient(ellipse 90% 100% at 15% 0%, #2c3e6c 0%, #202F53 55%, #131c36 100%);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    text-align: left;
+    padding: 72px 80px;
+    min-height: 620px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .hero__eyebrow {
+    font-size: 14px;
+    letter-spacing: 7px;
+  }
+
+  .hero__content {
+    flex: 1;
+    max-width: 480px;
   }
 
   .hero__title {
-    font-size: 3.5rem;
+    font-size: 58px;
+    line-height: 1.04;
+    letter-spacing: -1px;
+    margin-top: 22px;
   }
 
-  main {
-    padding: 3rem 1.5rem 4.5rem;
+  .hero__break--mobile {
+    display: none;
+  }
+
+  .hero__author {
+    font-size: 17px;
+    letter-spacing: 2.5px;
+    margin-top: 28px;
+  }
+
+  .hero__images {
+    flex: 1;
+    position: relative;
+    min-height: 500px;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .hero__cover {
+    position: absolute;
+    left: 10px;
+    bottom: 0;
+    width: 220px;
+    max-width: none;
+    transform: rotate(-6deg);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+  }
+
+  .hero__photo {
+    position: absolute;
+    right: 30px;
+    top: 10px;
+    width: 340px;
+    height: 440px;
+    max-width: none;
+    aspect-ratio: unset;
+    border-radius: 10px;
+    transform: rotate(2deg);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+    z-index: 1;
+  }
+
+  .comprar {
+    padding: 80px 80px 88px;
+  }
+
+  .comprar__title {
+    font-size: 34px;
+  }
+
+  .cards {
+    flex-direction: row;
+    gap: 28px;
+    margin-top: 40px;
+  }
+
+  .card {
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    border-radius: 18px;
+    padding: 30px 28px;
+    min-height: 170px;
+  }
+
+  .card__channel {
+    font-size: 22px;
+  }
+
+  .card__format {
+    margin-top: 10px;
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+
+  .card__deal {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .card__price {
+    font-size: 26px;
+  }
+
+  .card__arrow {
+    font-size: 20px;
+  }
+
+  .autor {
+    padding: 92px 120px;
+  }
+
+  .autor__label {
+    font-size: 14px;
+    letter-spacing: 4px;
+  }
+
+  .autor__nome {
+    font-size: 46px;
+    line-height: 1.1;
+    margin-top: 18px;
+  }
+
+  .autor__linha {
+    font-size: 16px;
+    margin-top: 14px;
+  }
+
+  .autor__bio {
+    font-size: 22px;
+    margin-top: 26px;
+  }
+
+  .redes {
+    padding: 56px 80px;
+  }
+
+  .redes__label {
+    font-size: 13px;
+    letter-spacing: 4px;
+  }
+
+  .redes__botoes {
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .redes__botao {
+    gap: 9px;
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+
+  .redes__linha {
+    width: 36px;
+    margin-top: 24px;
+  }
+
+  .footer {
+    padding: 26px 80px;
+  }
+
+  .footer__texto {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card__arrow,
+  .redes__botao {
+    transition: none;
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    transform: none;
   }
 }
