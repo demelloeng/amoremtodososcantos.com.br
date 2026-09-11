@@ -10,7 +10,7 @@ Página única, estática (HTML + CSS puro, sem framework), com cards de compra 
 /
 ├── index.html
 ├── styles.css
-├── assets/        (vazio na V0 — reservado para capa/imagens futuras)
+├── assets/        (favicon-16.png, favicon-32.png, favicon-512.png, og-image-v2.png)
 ├── CNAME          (amoremtodososcantos.com.br)
 └── README.md
 ```
@@ -29,7 +29,3 @@ Página única, estática (HTML + CSS puro, sem framework), com cards de compra 
 2. UICLAP — Impresso — R$ 49,99
 3. Clube de Autores — Impresso — R$ 69,98
 
-## Pendências de conteúdo (não inventadas — aguardando confirmação)
-
-- Favicon (nenhum asset apropriado disponível ainda).
-- Imagem Open Graph (og:image) — aguardando capa final como asset íntegro.
