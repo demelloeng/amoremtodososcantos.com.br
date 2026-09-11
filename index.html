@@ -25,66 +25,106 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header class="hero">
-  <p class="hero__eyebrow">Amor em todos os cantos</p>
-  <h1 class="hero__title">FISSURA</h1>
-  <p class="hero__subtitle">Escolha onde comprar o livro.</p>
+  <div class="hero__content">
+    <p class="hero__eyebrow">Fissura</p>
+    <h1 class="hero__title">AMOR <span class="hero__title-accent">em</span> TODOS<br class="hero__break--mobile"> <span class="hero__title-accent">os</span> CANTOS</h1>
+    <p class="hero__author">Marcos de Mello Silva</p>
+  </div>
+
+  <div class="hero__images">
+    <img class="hero__cover" src="assets/capa-fissura.png" alt="Capa do livro Amor em todos os cantos">
+    <img class="hero__photo" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva">
+  </div>
 </header>
 
 <main>
-  <h2 class="section-title">Onde comprar</h2>
 
-  <div class="cards">
+  <section class="comprar">
+    <div class="comprar__inner">
+      <h2 class="comprar__title">Onde comprar</h2>
 
-    <!-- Card 1: Amazon -->
-    <a class="card card--available"
-       href="https://www.amazon.com.br/dp/B0HB7PR45H"
-       target="_blank" rel="noopener noreferrer"
-       aria-label="Comprar na Amazon por R$ 14,90">
-      <p class="card__channel">Amazon</p>
-      <p class="card__format">E-book Kindle</p>
-      <div class="card__footer">
-        <span class="card__price">R$ 14,90</span>
-        <span class="card__cta">Comprar <span class="card__arrow" aria-hidden="true">→</span></span>
+      <div class="cards">
+
+        <a class="card"
+           href="https://www.amazon.com.br/dp/B0HB7PR45H"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="Comprar na Amazon por R$ 14,90">
+          <div class="card__info">
+            <span class="card__channel">Amazon</span>
+            <span class="card__format">E-book Kindle</span>
+          </div>
+          <div class="card__deal">
+            <span class="card__price">R$ 14,90</span>
+            <span class="card__arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a class="card"
+           href="https://loja.uiclap.com/titulo/ua200325"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="Comprar na UICLAP por R$ 49,99">
+          <div class="card__info">
+            <span class="card__channel">UICLAP</span>
+            <span class="card__format">Impresso</span>
+          </div>
+          <div class="card__deal">
+            <span class="card__price">R$ 49,99</span>
+            <span class="card__arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a class="card"
+           href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="Comprar no Clube de Autores por R$ 69,98">
+          <div class="card__info">
+            <span class="card__channel">Clube de Autores</span>
+            <span class="card__format">Impresso</span>
+          </div>
+          <div class="card__deal">
+            <span class="card__price">R$ 69,98</span>
+            <span class="card__arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
       </div>
-    </a>
+    </div>
+  </section>
 
-    <!-- Card 2: UICLAP -->
-    <a class="card card--available"
-       href="https://loja.uiclap.com/titulo/ua200325"
-       target="_blank" rel="noopener noreferrer"
-       aria-label="Comprar na UICLAP por R$ 49,99">
-      <p class="card__channel">UICLAP</p>
-      <p class="card__format">Impresso</p>
-      <div class="card__footer">
-        <span class="card__price">R$ 49,99</span>
-        <span class="card__cta">Comprar <span class="card__arrow" aria-hidden="true">→</span></span>
-      </div>
-    </a>
+  <section class="autor">
+    <div class="autor__inner">
+      <p class="autor__label">Sobre o autor</p>
+      <h2 class="autor__nome">Marcos de Mello Silva</h2>
+      <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
+      <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
+    </div>
+  </section>
 
-    <!-- Card 3: Clube de Autores -->
-    <a class="card card--available"
-       href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2"
-       target="_blank" rel="noopener noreferrer"
-       aria-label="Comprar no Clube de Autores por R$ 69,98">
-      <p class="card__channel">Clube de Autores</p>
-      <p class="card__format">Impresso</p>
-      <div class="card__footer">
-        <span class="card__price">R$ 69,98</span>
-        <span class="card__cta">Comprar <span class="card__arrow" aria-hidden="true">→</span></span>
-      </div>
-    </a>
+  <section class="redes">
+    <p class="redes__label">Acompanhe Fissura</p>
+    <div class="redes__botoes">
+      <a class="redes__botao" href="https://www.instagram.com/marxmellos/" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8CE8E" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>
+        Instagram
+      </a>
+      <a class="redes__botao" href="https://www.threads.com/@marxmellos" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8CE8E" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7v3a7 7 0 0 0 14 0"></path><path d="M9 12v-2a3 3 0 0 1 6 0v4a3 3 0 0 1-6 0"></path></svg>
+        Threads
+      </a>
+    </div>
+    <div class="redes__linha"></div>
+  </section>
 
-  </div>
 </main>
 
-<footer>
-  Amor em todos os cantos — Fissura
+<footer class="footer">
+  <p class="footer__texto">© Marcos de Mello Silva</p>
 </footer>
 
 </body>
