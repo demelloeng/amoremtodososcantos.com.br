@@ -27,6 +27,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NGG2M69HNW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NGG2M69HNW');
+</script>
 </head>
 <body>
 
@@ -54,7 +62,11 @@
         <a class="card"
            href="https://www.amazon.com.br/dp/B0HB7PR45H"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar na Amazon por R$ 14,90">
+           aria-label="Comprar na Amazon por R$ 14,90"
+           data-analytics-event="click_amazon"
+           data-retailer="amazon"
+           data-product-format="ebook_kindle"
+           data-price="14.90">
           <div class="card__info">
             <span class="card__channel">Amazon</span>
             <span class="card__format">E-book Kindle</span>
@@ -68,7 +80,11 @@
         <a class="card"
            href="https://loja.uiclap.com/titulo/ua200325"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar na UICLAP por R$ 49,99">
+           aria-label="Comprar na UICLAP por R$ 49,99"
+           data-analytics-event="click_uiclap"
+           data-retailer="uiclap"
+           data-product-format="impresso"
+           data-price="49.99">
           <div class="card__info">
             <span class="card__channel">UICLAP</span>
             <span class="card__format">Impresso</span>
@@ -82,7 +98,11 @@
         <a class="card"
            href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar no Clube de Autores por R$ 69,98">
+           aria-label="Comprar no Clube de Autores por R$ 69,98"
+           data-analytics-event="click_clube_autores"
+           data-retailer="clube_autores"
+           data-product-format="impresso"
+           data-price="69.98">
           <div class="card__info">
             <span class="card__channel">Clube de Autores</span>
             <span class="card__format">Impresso</span>
@@ -127,5 +147,6 @@
   <p class="footer__texto">© Marcos de Mello Silva</p>
 </footer>
 
+<script src="assets/analytics.js" defer></script>
 </body>
 </html>
