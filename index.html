@@ -39,6 +39,30 @@
 <body>
 
 <header class="hero">
+  <!-- Mapa do Brasil como sombra territorial de fundo. Silhueta: mapsicon (djaiss/mapsicon), uso livre com atribuição. -->
+  <div class="hero__map" aria-hidden="true">
+    <img class="hero__map-shape" src="assets/brazil-map.svg" alt="">
+    <svg class="hero__map-route" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid meet">
+      <polyline points="701,748 458,541 653,169 632,570 632,798 566,746 1001,343" class="hero__route-line" />
+      <circle cx="701" cy="748" r="6" class="hero__route-dot" />
+      <circle cx="458" cy="541" r="6" class="hero__route-dot" />
+      <circle cx="653" cy="169" r="6" class="hero__route-dot" />
+      <circle cx="632" cy="570" r="6" class="hero__route-dot" />
+      <circle cx="632" cy="798" r="6" class="hero__route-dot" />
+      <circle cx="566" cy="746" r="6" class="hero__route-dot" />
+      <circle cx="1001" cy="343" r="6" class="hero__route-dot" />
+      <g class="hero__route-labels">
+        <text x="711" y="745">São Paulo</text>
+        <text x="378" y="544">Cuiabá</text>
+        <text x="663" y="155">Belém</text>
+        <text x="472" y="597">Goiânia</text>
+        <text x="472" y="828">Curitiba</text>
+        <text x="416" y="770">Maringá</text>
+        <text x="831" y="340">Nordeste ?</text>
+      </g>
+    </svg>
+  </div>
+
   <div class="hero__content">
     <p class="hero__eyebrow">Fissura</p>
     <h1 class="hero__title">AMOR <span class="hero__title-accent">em</span> TODOS<br class="hero__break--mobile"> <span class="hero__title-accent">os</span> CANTOS</h1>
@@ -47,7 +71,6 @@
 
   <div class="hero__images">
     <img class="hero__cover" src="assets/capa-fissura.png" alt="Capa do livro Amor em todos os cantos">
-    <img class="hero__photo" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva">
   </div>
 </header>
 
@@ -68,8 +91,11 @@
            data-product-format="ebook_kindle"
            data-price="14.90">
           <div class="card__info">
-            <span class="card__channel">Amazon</span>
-            <span class="card__format">E-book Kindle</span>
+            <span class="card__logo card__logo--chip"><img src="assets/logo-amazon.png" alt="" loading="lazy"></span>
+            <span class="card__text">
+              <span class="card__channel">Amazon</span>
+              <span class="card__format">E-book Kindle</span>
+            </span>
           </div>
           <div class="card__deal">
             <span class="card__price">R$ 14,90</span>
@@ -86,8 +112,11 @@
            data-product-format="impresso"
            data-price="49.99">
           <div class="card__info">
-            <span class="card__channel">UICLAP</span>
-            <span class="card__format">Impresso</span>
+            <span class="card__logo"><img src="assets/logo-uiclap.png" alt="" loading="lazy"></span>
+            <span class="card__text">
+              <span class="card__channel">UICLAP</span>
+              <span class="card__format">Impresso</span>
+            </span>
           </div>
           <div class="card__deal">
             <span class="card__price">R$ 49,99</span>
@@ -104,8 +133,11 @@
            data-product-format="impresso"
            data-price="69.98">
           <div class="card__info">
-            <span class="card__channel">Clube de Autores</span>
-            <span class="card__format">Impresso</span>
+            <span class="card__logo"><img src="assets/logo-clube-autores.png" alt="" loading="lazy"></span>
+            <span class="card__text">
+              <span class="card__channel">Clube de Autores</span>
+              <span class="card__format">Impresso</span>
+            </span>
           </div>
           <div class="card__deal">
             <span class="card__price">R$ 69,98</span>
@@ -117,12 +149,57 @@
     </div>
   </section>
 
+  <section class="manifesto">
+    <div class="manifesto__inner">
+      <p class="manifesto__frase">&ldquo;Amor em todos os cantos nasceu de uma ferida.&rdquo;</p>
+      <p class="manifesto__linha">Escrito com humor, antes mesmo do livro estar pronto — pra colocar pra fora o que precisava sair.</p>
+    </div>
+  </section>
+
+  <section class="vozes">
+    <div class="vozes__inner">
+      <p class="vozes__label">Vozes de leitura</p>
+
+      <div class="vozes__destaque">
+        <img class="vozes__foto vozes__foto--grande" src="assets/leitor-aline.jpg" alt="Aline" loading="lazy">
+        <div class="vozes__texto">
+          <span class="vozes__nome">Aline</span>
+          <p class="vozes__depoimento vozes__depoimento--grande">&ldquo;Você criou um lugar onde eu entrei e me senti em casa.&rdquo;</p>
+          <p class="vozes__depoimento vozes__depoimento--secundario">&ldquo;Quando eu terminei, senti saudade deles.&rdquo;</p>
+        </div>
+      </div>
+
+      <div class="vozes__linha"></div>
+
+      <div class="vozes__grid">
+        <div class="vozes__item">
+          <img class="vozes__foto" src="assets/leitor-ana.jpg" alt="Ana" loading="lazy">
+          <span class="vozes__nome vozes__nome--pequeno">Ana</span>
+          <p class="vozes__depoimento">&ldquo;Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.&rdquo;</p>
+        </div>
+        <div class="vozes__item">
+          <img class="vozes__foto" src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy">
+          <span class="vozes__nome vozes__nome--pequeno">Saulo</span>
+          <p class="vozes__depoimento">&ldquo;Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.&rdquo;</p>
+        </div>
+        <div class="vozes__item">
+          <img class="vozes__foto" src="assets/leitor-karina.jpg" alt="Karina" loading="lazy">
+          <span class="vozes__nome vozes__nome--pequeno">Karina</span>
+          <p class="vozes__depoimento">&ldquo;E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="autor">
     <div class="autor__inner">
-      <p class="autor__label">Sobre o autor</p>
-      <h2 class="autor__nome">Marcos de Mello Silva</h2>
-      <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
-      <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
+      <img class="autor__foto" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva" loading="lazy">
+      <div class="autor__texto">
+        <p class="autor__label">Sobre o autor</p>
+        <h2 class="autor__nome">Marcos de Mello Silva</h2>
+        <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
+        <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
+      </div>
     </div>
   </section>
 
