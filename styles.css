@@ -566,9 +566,9 @@ img {
 
   .hero__map-shape,
   .hero__map-route {
-    top: 44%;
-    left: 62%;
-    width: 115%;
+    top: 50%;
+    left: 53%;
+    width: 56%;
     transform: translate(-50%, -50%) rotate(-10deg) scaleY(0.88);
   }
 
