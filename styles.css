@@ -371,7 +371,7 @@ img {
 
 .vozes__depoimento {
   font-family: "EB Garamond", Garamond, serif;
-  font-style: italic;
+  font-style: normal;
   font-size: 14px;
   line-height: 1.5;
   color: var(--branco);
