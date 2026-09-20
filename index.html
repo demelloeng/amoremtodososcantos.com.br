@@ -83,13 +83,14 @@
       <div class="cards">
 
         <a class="card"
+           data-price-channel="amazon"
            href="https://www.amazon.com.br/dp/B0HB7PR45H"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar na Amazon por R$ 14,90"
+           aria-label="Comprar na Amazon — carregando preço"
            data-analytics-event="click_amazon"
            data-retailer="amazon"
            data-product-format="ebook_kindle"
-           data-price="14.90">
+           data-price="">
           <div class="card__info">
             <span class="card__logo card__logo--chip"><img src="assets/logo-amazon.png" alt="" loading="lazy"></span>
             <span class="card__text">
@@ -98,19 +99,21 @@
             </span>
           </div>
           <div class="card__deal">
-            <span class="card__price">R$ 14,90</span>
+            <span id="amazon-kindle-unlimited" class="card__benefit" hidden>Grátis no Kindle Unlimited</span>
+            <span class="card__price">Carregando…</span>
             <span class="card__arrow" aria-hidden="true">→</span>
           </div>
         </a>
 
         <a class="card"
+           data-price-channel="uiclap"
            href="https://loja.uiclap.com/titulo/ua200325"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar na UICLAP por R$ 49,99"
+           aria-label="Comprar na UICLAP — carregando preço"
            data-analytics-event="click_uiclap"
            data-retailer="uiclap"
            data-product-format="impresso"
-           data-price="49.99">
+           data-price="">
           <div class="card__info">
             <span class="card__logo"><img src="assets/logo-uiclap.png" alt="" loading="lazy"></span>
             <span class="card__text">
@@ -119,19 +122,20 @@
             </span>
           </div>
           <div class="card__deal">
-            <span class="card__price">R$ 49,99</span>
+            <span class="card__price">Carregando…</span>
             <span class="card__arrow" aria-hidden="true">→</span>
           </div>
         </a>
 
         <a class="card"
+           data-price-channel="clube_autores"
            href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2"
            target="_blank" rel="noopener noreferrer"
-           aria-label="Comprar no Clube de Autores por R$ 69,98"
+           aria-label="Comprar no Clube de Autores — carregando preço"
            data-analytics-event="click_clube_autores"
            data-retailer="clube_autores"
            data-product-format="impresso"
-           data-price="69.98">
+           data-price="">
           <div class="card__info">
             <span class="card__logo"><img src="assets/logo-clube-autores.png" alt="" loading="lazy"></span>
             <span class="card__text">
@@ -140,10 +144,35 @@
             </span>
           </div>
           <div class="card__deal">
-            <span class="card__price">R$ 69,98</span>
+            <span class="card__price">Carregando…</span>
             <span class="card__arrow" aria-hidden="true">→</span>
           </div>
         </a>
+
+        <article id="direct-card" class="card card--direct" data-price-channel="direct" hidden
+                 data-retailer="direct" data-product-format="impresso_autografado"
+                 aria-label="Compra direta — carregando preço">
+          <div class="card__info">
+            <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
+            <span class="card__text"><span class="card__channel">Compra direta</span>
+              <span class="card__format">Autografado + marca-páginas</span></span>
+          </div>
+          <div class="card__deal"><span class="card__price">Carregando…</span></div>
+          <p id="direct-coming-soon" class="direct__coming-soon" hidden>Em breve</p>
+          <p id="direct-payment-methods" class="direct__payment"></p>
+          <p id="direct-payment-installments" class="direct__payment" hidden></p>
+          <div id="direct-flow" hidden>
+            <label class="direct__label" for="direct-cep">CEP de entrega</label>
+            <div class="direct__cep"><input id="direct-cep" inputmode="numeric" maxlength="9" placeholder="00000-000"><button id="direct-quote" type="button">Calcular frete</button></div>
+            <p id="direct-loading" hidden>Calculando frete…</p><p id="direct-error" class="direct__error" role="alert" hidden></p>
+            <dl id="direct-summary" class="direct__summary" hidden>
+              <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Livro</dt><dd id="direct-book">—</dd></div>
+              <div><dt>Frete cobrado</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
+              <div><dt>Prazo</dt><dd id="direct-days">—</dd></div><div class="direct__total"><dt>Total</dt><dd id="direct-total">—</dd></div>
+            </dl>
+            <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
+          </div>
+        </article>
 
       </div>
     </div>
@@ -225,5 +254,6 @@
 </footer>
 
 <script src="assets/analytics.js" defer></script>
+<script src="assets/direct-sales.js" defer></script>
 </body>
 </html>

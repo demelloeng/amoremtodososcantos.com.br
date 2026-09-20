@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "currency": "BRL",
+  "api_base_url": "",
+  "direct_sale": {
+    "status": "coming_soon",
+    "payment": {
+      "pix_enabled": true,
+      "credit_card_enabled": true,
+      "max_installments": null
+    }
+  },
+  "channels": {
+    "direct": {
+      "amount_cents": null,
+      "status": "unavailable"
+    },
+    "amazon": {
+      "amount_cents": 990,
+      "status": "active",
+      "kindle_unlimited": true
+    },
+    "uiclap": {
+      "amount_cents": 4999,
+      "status": "active"
+    },
+    "clube_autores": {
+      "amount_cents": 6998,
+      "status": "active"
+    }
+  },
+  "shipping_rules": {
+    "outside_curitiba": {
+      "enabled": false,
+      "amount_cents": 0
+    },
+    "curitiba_local": {
+      "enabled": false,
+      "amount_cents": 0
+    }
+  }
+}

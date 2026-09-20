@@ -9,6 +9,8 @@
   box-sizing: border-box;
 }
 
+[hidden] { display: none !important; }
+
 html {
   -webkit-text-size-adjust: 100%;
 }
@@ -281,6 +283,25 @@ img {
 .card:focus-visible .card__arrow {
   transform: translateX(3px);
 }
+
+.card__benefit { color: var(--branco); font-size: 13px; font-weight: 800; }
+
+.card--direct { align-items: stretch; cursor: default; flex-direction: column; }
+.card__logo--direct { background: var(--dourado); color: var(--azul); font-size: 21px; }
+.direct__label { color: var(--branco); font-size: 13px; font-weight: 700; margin-top: 8px; }
+.direct__cep { display: flex; gap: 8px; }
+.direct__cep input, .direct__cep button, .direct__buy { border: 0; border-radius: 8px; padding: 11px 12px; font: inherit; }
+.direct__cep input { flex: 1; min-width: 0; }
+.direct__cep button, .direct__buy { background: var(--dourado); color: var(--azul); font-weight: 800; cursor: pointer; }
+.direct__buy:disabled { opacity: .45; cursor: not-allowed; }
+.direct__coming-soon { margin: 18px 0 2px; color: #E8CE8E; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.direct__payment { margin: 3px 0 0; color: var(--branco); font-size: 13px; font-weight: 600; }
+.direct__error { color: #ffd3d3; margin: 0; }
+.direct__summary { background: var(--branco); color: var(--azul); border-radius: 10px; padding: 10px; margin: 0; }
+.direct__summary div { display: flex; justify-content: space-between; gap: 12px; padding: 4px; }
+.direct__summary [hidden] { display: none !important; }
+.direct__summary dd { margin: 0; text-align: right; }
+.direct__total { border-top: 1px solid #d7dbe5; font-weight: 800; }
 
 /* ---------- MANIFESTO ---------- */
 
@@ -635,6 +656,8 @@ img {
     padding: 30px 28px;
     min-height: 170px;
   }
+
+  .card--direct { flex: 1.35; }
 
   .card__logo {
     width: 40px;
