@@ -3,17 +3,17 @@
   "currency": "BRL",
   "api_base_url": "",
   "direct_sale": {
-    "status": "coming_soon",
+    "status": "hidden",
     "payment": {
-      "pix_enabled": true,
-      "credit_card_enabled": true,
-      "max_installments": null
+      "pix_enabled": false,
+      "credit_card_enabled": false,
+      "max_installments": 2
     }
   },
   "channels": {
     "direct": {
-      "amount_cents": null,
-      "status": "unavailable"
+      "amount_cents": 4990,
+      "status": "active"
     },
     "amazon": {
       "amount_cents": 990,
@@ -21,11 +21,11 @@
       "kindle_unlimited": true
     },
     "uiclap": {
-      "amount_cents": 4999,
+      "amount_cents": 4990,
       "status": "active"
     },
     "clube_autores": {
-      "amount_cents": 6998,
+      "amount_cents": 4990,
       "status": "active"
     }
   },
@@ -36,7 +36,7 @@
     },
     "curitiba_local": {
       "enabled": false,
-      "amount_cents": 0
+      "amount_cents": 590
     }
   }
 }
