@@ -3,7 +3,7 @@
   "currency": "BRL",
   "api_base_url": "",
   "direct_sale": {
-    "status": "hidden",
+    "status": "coming_soon",
     "payment": {
       "pix_enabled": false,
       "credit_card_enabled": false,
@@ -12,7 +12,7 @@
   },
   "channels": {
     "direct": {
-      "amount_cents": 4990,
+      "amount_cents": 4999,
       "status": "active"
     },
     "amazon": {
@@ -21,11 +21,11 @@
       "kindle_unlimited": true
     },
     "uiclap": {
-      "amount_cents": 4990,
+      "amount_cents": 4590,
       "status": "active"
     },
     "clube_autores": {
-      "amount_cents": 4990,
+      "amount_cents": 4999,
       "status": "active"
     }
   },
