@@ -3,7 +3,7 @@
   "currency": "BRL",
   "api_base_url": "https://ma-fissura-direct-sales-a4krygr7ma-rj.a.run.app",
   "direct_sale": {
-    "status": "coming_soon",
+    "status": "active",
     "payment": {
       "pix_enabled": true,
       "credit_card_enabled": true,
