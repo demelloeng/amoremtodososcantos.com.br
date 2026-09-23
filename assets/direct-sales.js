@@ -1,5 +1,5 @@
 (function () {
-  var prices = null, currentQuote = null, apiBase = '', directSaleActive = false;
+  var prices = null, currentQuote = null, currentSummary = null, apiBase = '', directSaleActive = false;
   var quoteRevision = 0, quotedCep = '';
   var cepInput = document.getElementById('direct-cep');
   var directCard = document.getElementById('direct-card');
@@ -15,6 +15,17 @@
   function money(cents) { return new Intl.NumberFormat('pt-BR', {style:'currency',currency:'BRL'}).format(cents / 100); }
   function channelName(id) { return {direct:'Compra direta',amazon:'Amazon',uiclap:'UICLAP',clube_autores:'Clube de Autores'}[id]; }
   function fail(message) { errorBox.textContent = message; errorBox.hidden = false; }
+  function showQuote(quote, confirmed) {
+    currentQuote = quote; currentSummary = confirmed;
+    document.getElementById('direct-region').textContent = quote.is_curitiba ? 'Curitiba' : 'Fora de Curitiba';
+    document.getElementById('direct-book').textContent = money(confirmed.book_amount_cents);
+    document.getElementById('direct-shipping').textContent = money(confirmed.shipping_amount_cents);
+    document.getElementById('direct-real').textContent = money(confirmed.real_shipping_amount_cents);
+    document.getElementById('direct-real-row').hidden = confirmed.real_shipping_amount_cents === confirmed.shipping_amount_cents;
+    document.getElementById('direct-days').textContent = confirmed.delivery_days + (confirmed.delivery_days === 1 ? ' dia útil' : ' dias úteis');
+    document.getElementById('direct-total').textContent = money(confirmed.total_amount_cents);
+    summary.hidden = false; buy.disabled = false;
+  }
   fetch('/config/prices.json', {cache:'no-store'}).then(function (response) { if (!response.ok) throw new Error(); return response.json(); }).then(function (data) {
     prices = data.channels;
     apiBase = String(data.api_base_url || '').replace(/\/+$/, '');
@@ -57,7 +68,7 @@
   }).catch(function () { fail('Não foi possível carregar os preços.'); });
   function invalidateQuote() {
     quoteRevision += 1;
-    currentQuote = null; quotedCep = '';
+    currentQuote = null; currentSummary = null; quotedCep = '';
     buy.disabled = true; summary.hidden = true; loading.hidden = true; errorBox.hidden = true;
   }
   function onCepEdit() {
@@ -77,29 +88,28 @@
       .then(function (response) { return response.json().then(function (data) { if (!response.ok) throw new Error(data.error.message); return data; }); })
       .then(function (data) {
         if (revision !== quoteRevision || destinationCep !== cepInput.value) return;
-        currentQuote = data.quote; quotedCep = destinationCep;
-        document.getElementById('direct-region').textContent = currentQuote.is_curitiba ? 'Curitiba' : 'Fora de Curitiba';
-        document.getElementById('direct-book').textContent = money(prices.direct.amount_cents);
-        document.getElementById('direct-shipping').textContent = money(currentQuote.charged_amount_cents);
-        document.getElementById('direct-real').textContent = money(currentQuote.real_amount_cents);
-        document.getElementById('direct-real-row').hidden = currentQuote.real_amount_cents === currentQuote.charged_amount_cents;
-        document.getElementById('direct-days').textContent = currentQuote.delivery_days + (currentQuote.delivery_days === 1 ? ' dia útil' : ' dias úteis');
-        document.getElementById('direct-total').textContent = money(prices.direct.amount_cents + currentQuote.charged_amount_cents);
-        summary.hidden = false; buy.disabled = false;
+        quotedCep = destinationCep;
+        showQuote(data.quote, data.summary);
       }).catch(function (error) {
         if (revision === quoteRevision && destinationCep === cepInput.value) fail(error.message || 'Frete indisponível.');
       }).finally(function () { if (revision === quoteRevision) loading.hidden = true; });
   });
   buy.addEventListener('click', function () {
-    if (!directSaleActive || !currentQuote || buy.disabled) return;
+    if (!directSaleActive || !currentQuote || !currentSummary || buy.disabled) return;
     if (quotedCep !== cepInput.value) { invalidateQuote(); return; }
     var revision = quoteRevision, destinationCep = quotedCep;
     buy.disabled = true; errorBox.hidden = true;
-    fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:destinationCep})})
-      .then(function (response) { return response.json().then(function (data) { if (!response.ok) throw new Error(data.error.message); return data; }); })
-      .then(function (data) {
+    fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:destinationCep, confirmed_summary:currentSummary})})
+      .then(function (response) { return response.json().then(function (data) { return {status:response.status, ok:response.ok, data:data}; }); })
+      .then(function (result) {
         if (revision !== quoteRevision || destinationCep !== cepInput.value) return;
-        window.open(data.checkout.url, '_blank', 'noopener');
+        if (result.status === 409 && result.data.error && result.data.error.code === 'QUOTE_CHANGED') {
+          showQuote(result.data.quote, result.data.summary);
+          fail('Os valores foram atualizados. Confira e clique em Comprar novamente.');
+          return;
+        }
+        if (!result.ok) throw new Error(result.data.error && result.data.error.message);
+        window.open(result.data.checkout.url, '_blank', 'noopener');
       })
       .catch(function (error) {
         if (revision !== quoteRevision || destinationCep !== cepInput.value || !currentQuote) return;
