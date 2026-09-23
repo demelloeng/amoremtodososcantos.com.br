@@ -1,5 +1,7 @@
 (function () {
   var prices = null, currentQuote = null, apiBase = '', directSaleActive = false;
+  var quoteRevision = 0, quotedCep = '';
+  var cepInput = document.getElementById('direct-cep');
   var directCard = document.getElementById('direct-card');
   var directFlow = document.getElementById('direct-flow');
   var comingSoon = document.getElementById('direct-coming-soon');
@@ -53,13 +55,29 @@
       if (item.amount_cents !== null) card.dataset.price = (item.amount_cents / 100).toFixed(2);
     });
   }).catch(function () { fail('Não foi possível carregar os preços.'); });
+  function invalidateQuote() {
+    quoteRevision += 1;
+    currentQuote = null; quotedCep = '';
+    buy.disabled = true; summary.hidden = true; loading.hidden = true; errorBox.hidden = true;
+  }
+  function onCepEdit() {
+    // An in-flight response must not restore a quote for an earlier edit,
+    // even when the user changes the field back to the same CEP.
+    if (currentQuote || !loading.hidden) invalidateQuote();
+    else quoteRevision += 1;
+  }
+  cepInput.addEventListener('input', onCepEdit);
+  cepInput.addEventListener('change', onCepEdit);
   document.getElementById('direct-quote').addEventListener('click', function () {
     if (!directSaleActive) return;
-    buy.disabled = true; currentQuote = null; errorBox.hidden = true; summary.hidden = true; loading.hidden = false;
-    fetch(apiBase + '/v1/shipping/quote', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:document.getElementById('direct-cep').value})})
+    invalidateQuote();
+    var revision = quoteRevision, destinationCep = cepInput.value;
+    loading.hidden = false;
+    fetch(apiBase + '/v1/shipping/quote', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:destinationCep})})
       .then(function (response) { return response.json().then(function (data) { if (!response.ok) throw new Error(data.error.message); return data; }); })
       .then(function (data) {
-        currentQuote = data.quote;
+        if (revision !== quoteRevision || destinationCep !== cepInput.value) return;
+        currentQuote = data.quote; quotedCep = destinationCep;
         document.getElementById('direct-region').textContent = currentQuote.is_curitiba ? 'Curitiba' : 'Fora de Curitiba';
         document.getElementById('direct-book').textContent = money(prices.direct.amount_cents);
         document.getElementById('direct-shipping').textContent = money(currentQuote.charged_amount_cents);
@@ -68,13 +86,24 @@
         document.getElementById('direct-days').textContent = currentQuote.delivery_days + (currentQuote.delivery_days === 1 ? ' dia útil' : ' dias úteis');
         document.getElementById('direct-total').textContent = money(prices.direct.amount_cents + currentQuote.charged_amount_cents);
         summary.hidden = false; buy.disabled = false;
-      }).catch(function (error) { fail(error.message || 'Frete indisponível.'); }).finally(function () { loading.hidden = true; });
+      }).catch(function (error) {
+        if (revision === quoteRevision && destinationCep === cepInput.value) fail(error.message || 'Frete indisponível.');
+      }).finally(function () { if (revision === quoteRevision) loading.hidden = true; });
   });
   buy.addEventListener('click', function () {
-    if (!directSaleActive || !currentQuote) return; buy.disabled = true; errorBox.hidden = true;
-    fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:document.getElementById('direct-cep').value})})
+    if (!directSaleActive || !currentQuote || buy.disabled) return;
+    if (quotedCep !== cepInput.value) { invalidateQuote(); return; }
+    var revision = quoteRevision, destinationCep = quotedCep;
+    buy.disabled = true; errorBox.hidden = true;
+    fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:destinationCep})})
       .then(function (response) { return response.json().then(function (data) { if (!response.ok) throw new Error(data.error.message); return data; }); })
-      .then(function (data) { window.open(data.checkout.url, '_blank', 'noopener'); })
-      .catch(function (error) { fail(error.message || 'Checkout indisponível.'); buy.disabled = false; });
+      .then(function (data) {
+        if (revision !== quoteRevision || destinationCep !== cepInput.value) return;
+        window.open(data.checkout.url, '_blank', 'noopener');
+      })
+      .catch(function (error) {
+        if (revision !== quoteRevision || destinationCep !== cepInput.value || !currentQuote) return;
+        fail(error.message || 'Checkout indisponível.'); buy.disabled = false;
+      });
   });
 }());
