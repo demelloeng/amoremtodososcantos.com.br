@@ -37,6 +37,7 @@
 </script>
 </head>
 <body>
+<a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
 <header class="hero">
   <!-- Mapa do Brasil como sombra territorial de fundo. Silhueta: mapsicon (djaiss/mapsicon), uso livre com atribuição. -->
@@ -65,8 +66,13 @@
 
   <div class="hero__content">
     <p class="hero__eyebrow">Fissura</p>
-    <h1 class="hero__title">AMOR <span class="hero__title-accent">em</span> TODOS<br class="hero__break--mobile"> <span class="hero__title-accent">os</span> CANTOS</h1>
-    <p class="hero__author">Marcos de Mello Silva</p>
+    <h1 class="hero__title">AMOR <span class="hero__title-accent">em</span><br>TODOS <span class="hero__title-accent">os</span><br>CANTOS</h1>
+    <p class="hero__author">MARCOS DE MELLO SILVA</p>
+    <div class="hero__teaser">
+      <p>Um romance. Ou ficção.<br>Ou romance fictício? Ainda não sei.</p>
+      <p>O que sei: é uma fic sobre uma engenheira<br><strong>TOTALMENTE DESEQUILIBRADA</strong><br>que percorre o Brasil a trabalho.</p>
+    </div>
+    <div class="hero__actions"><a class="button" href="#comprar">COMPRE AQUI</a><a class="button button--outline" href="#a-fic">CONHEÇA A FIC</a></div>
   </div>
 
   <div class="hero__images">
@@ -74,11 +80,11 @@
   </div>
 </header>
 
-<main>
+<main id="conteudo">
 
-  <section class="comprar">
+  <section class="comprar" id="comprar" aria-labelledby="comprar-title">
     <div class="comprar__inner">
-      <h2 class="comprar__title">Onde comprar</h2>
+      <h2 class="comprar__title" id="comprar-title">Onde comprar</h2>
 
       <div class="cards">
 
@@ -101,8 +107,9 @@
           <div class="card__deal">
             <span id="amazon-kindle-unlimited" class="card__benefit" hidden>Grátis no Kindle Unlimited</span>
             <span class="card__price">Carregando…</span>
-            <span class="card__arrow" aria-hidden="true">→</span>
+
           </div>
+        <span class="card__cta">COMPRAR NA AMAZON</span>
         </a>
 
         <a class="card"
@@ -123,8 +130,9 @@
           </div>
           <div class="card__deal">
             <span class="card__price">Carregando…</span>
-            <span class="card__arrow" aria-hidden="true">→</span>
+
           </div>
+        <span class="card__cta">COMPRAR NA UICLAP</span>
         </a>
 
         <a class="card"
@@ -145,8 +153,9 @@
           </div>
           <div class="card__deal">
             <span class="card__price">Carregando…</span>
-            <span class="card__arrow" aria-hidden="true">→</span>
+
           </div>
+        <span class="card__cta">COMPRAR NO CLUBE</span>
         </a>
 
         <article id="direct-card" class="card card--direct" data-price-channel="direct" hidden
@@ -158,7 +167,7 @@
               <span class="card__format">Autografado + marca-páginas</span></span>
           </div>
           <div class="card__deal"><span class="card__price">Carregando…</span></div>
-          <p id="direct-coming-soon" class="direct__coming-soon" hidden>Em breve</p>
+          <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
           <p id="direct-payment-methods" class="direct__payment"></p>
           <p id="direct-payment-installments" class="direct__payment" hidden></p>
           <div id="direct-flow" hidden>
@@ -178,74 +187,87 @@
     </div>
   </section>
 
-  <section class="manifesto">
-    <div class="manifesto__inner">
-      <p class="manifesto__frase">&ldquo;Amor em todos os cantos nasceu de uma ferida.&rdquo;</p>
-      <p class="manifesto__linha">Palavras do autor</p>
+  <section class="section purchase-faq" aria-labelledby="duvidas-title">
+    <h2 id="duvidas-title">Dúvidas de compra</h2>
+    <div class="accordion-grid">
+      <details><summary>Formatos e canais de compra</summary><p>Escolha um dos canais em <a href="#comprar">Onde comprar</a> para acessar a edição correspondente.</p></details>
+      <details><summary>Pagamento e parcelamento</summary><p>Consulte as condições no canal escolhido. Na compra direta, os meios de pagamento são exibidos no card quando disponíveis.</p></details>
+      <details><summary>Frete, prazo e entrega</summary><p>Na compra direta, quando ativa, informe o CEP para consultar frete, prazo e total antes de seguir para o pagamento.</p></details>
+      <details><summary>Autógrafo e marca-páginas</summary><p>Autógrafo e marca-páginas fazem parte da opção de compra direta.</p></details>
     </div>
   </section>
 
-  <section class="vozes">
-    <div class="vozes__inner">
-      <p class="vozes__label">Vozes de leitura</p>
+  <section class="section fic" id="a-fic" aria-labelledby="fic-title">
+    <h2 id="fic-title">A FIC</h2>
+    <div class="fic__text">
+      <p><strong>Até aí, tudo normal. Só que não.</strong></p>
+      <p>Porque, enquanto ela atravessa o Brasil a trabalho, seu best — um hétero top polido — garante que ela continue viva e uma amiga completamente sem freio se comporta com a discrição de um destaque de escola de samba.</p>
+      <p>No meio disso, ela se apaixona por um príncipe em pleno Pantanal, tem um crush fodido na nerd sapatona do andar de cima e tenta acompanhar a gravidez de uma jovem idosa — sua amiga do Velho Testamento.</p>
+      <p>E ainda tem a <strong>Arizona. Sério.</strong><br>Neta da Regina George Roitman Priestley que vocês não conseguiram queimar.</p>
+      <div class="fic__ending"><p>No livro tem: <strong>Brasil</strong>, meme, farofa, sotaque, política, gays LGBT, povo animado e outras cositas más.</p>
+      <p class="fic__payoff">O roteirista do Brasil fez hora extra aqui em nome do entretenimento.</p></div>
+    </div>
+  </section>
 
-      <div class="vozes__destaque">
-        <img class="vozes__foto vozes__foto--grande" src="assets/leitor-aline.jpg" alt="Aline" loading="lazy">
-        <div class="vozes__texto">
-          <span class="vozes__nome">Aline</span>
-          <p class="vozes__depoimento vozes__depoimento--grande">&ldquo;Você criou um lugar onde eu entrei e me senti em casa.&rdquo;</p>
-          <p class="vozes__depoimento vozes__depoimento--secundario">&ldquo;Quando eu terminei, senti saudade deles.&rdquo;</p>
-        </div>
+  <section class="section elenco" id="elenco" aria-labelledby="elenco-title" data-carousel>
+    <div class="section-heading"><h2 id="elenco-title">CONHEÇA O ELENCO</h2><div class="carousel-controls cast-controls" hidden><button type="button" data-step="-1" aria-controls="cast-track" aria-label="Personagem anterior">‹</button><button type="button" data-step="1" aria-controls="cast-track" aria-label="Próximo personagem">›</button></div></div>
+    <ul class="cast-track" id="cast-track" data-track tabindex="0" aria-label="Elenco de Fissura">
+      <li><h3>DEMI</h3><p>uma engenheira desequilibrada</p></li>
+      <li><h3>DÉDS</h3><p>um hétero top polido</p></li>
+      <li><h3>CÉCIS</h3><p>uma maluca tão discreta quanto um destaque de escola de samba</p></li>
+      <li><h3>PAULO</h3><p>um príncipe pantaneiro</p></li>
+      <li><h3>DANI</h3><p>uma sapatona nerd</p></li>
+      <li><h3>REVS</h3><p>uma jovem idosa grávida</p></li>
+      <li><h3>ARIZONA</h3><p>Arizona. Só Arizona.</p></li>
+    </ul>
+    <p class="sr-only" data-carousel-status aria-live="polite"></p>
+  </section>
+
+  <section class="vozes" aria-labelledby="vozes-title" data-carousel>
+    <div class="section">
+      <div class="section-heading"><h2 id="vozes-title">O QUE ESTÃO DIZENDO</h2><div class="carousel-controls" hidden><button type="button" data-step="-1" aria-controls="voices-track" aria-label="Depoimento anterior">‹</button><button type="button" data-step="1" aria-controls="voices-track" aria-label="Próximo depoimento">›</button></div></div>
+      <div class="voices-track" id="voices-track" data-track tabindex="0" aria-label="Depoimentos de leitores">
+        <article class="voice" id="voz-aline"><img src="assets/leitor-aline.jpg" alt="Aline" loading="lazy"><div><h3>Aline</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Você criou um lugar onde eu entrei e me senti em casa.”</p><p class="voice__after">“Quando eu terminei, senti saudade deles.”</p></blockquote></div></article>
+        <article class="voice" id="voz-ana"><img src="assets/leitor-ana.jpg" alt="Ana" loading="lazy"><div><h3>Ana</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.”</p></blockquote></div></article>
+        <article class="voice" id="voz-saulo"><img src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy"><div><h3>Saulo</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.”</p></blockquote></div></article>
+        <article class="voice" id="voz-karina"><img src="assets/leitor-karina.jpg" alt="Karina" loading="lazy"><div><h3>Karina</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.”</p></blockquote></div></article>
       </div>
-
-      <div class="vozes__linha"></div>
-
-      <div class="vozes__grid">
-        <div class="vozes__item">
-          <img class="vozes__foto" src="assets/leitor-ana.jpg" alt="Ana" loading="lazy">
-          <span class="vozes__nome vozes__nome--pequeno">Ana</span>
-          <p class="vozes__depoimento">&ldquo;Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.&rdquo;</p>
-        </div>
-        <div class="vozes__item">
-          <img class="vozes__foto" src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy">
-          <span class="vozes__nome vozes__nome--pequeno">Saulo</span>
-          <p class="vozes__depoimento">&ldquo;Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.&rdquo;</p>
-        </div>
-        <div class="vozes__item">
-          <img class="vozes__foto" src="assets/leitor-karina.jpg" alt="Karina" loading="lazy">
-          <span class="vozes__nome vozes__nome--pequeno">Karina</span>
-          <p class="vozes__depoimento">&ldquo;E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.&rdquo;</p>
-        </div>
+      <p class="sr-only" data-carousel-status aria-live="polite"></p>
+      <div class="voices-nav" aria-label="Escolher depoimento" hidden>
+        <button type="button" data-slide="0" aria-controls="voices-track"><img src="assets/leitor-aline.jpg" alt="" loading="lazy"><span>Aline</span></button>
+        <button type="button" data-slide="1" aria-controls="voices-track"><img src="assets/leitor-ana.jpg" alt="" loading="lazy"><span>Ana</span></button>
+        <button type="button" data-slide="2" aria-controls="voices-track"><img src="assets/leitor-saulo.jpg" alt="" loading="lazy"><span>Saulo</span></button>
+        <button type="button" data-slide="3" aria-controls="voices-track"><img src="assets/leitor-karina.jpg" alt="" loading="lazy"><span>Karina</span></button>
       </div>
+      <div class="center-action"><a class="button" href="#comprar">COMPRE AQUI</a></div>
     </div>
   </section>
 
-  <section class="autor">
-    <div class="autor__inner">
-      <img class="autor__foto" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva" loading="lazy">
-      <div class="autor__texto">
-        <p class="autor__label">Sobre o autor</p>
-        <h2 class="autor__nome">Marcos de Mello Silva</h2>
-        <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
-        <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
-      </div>
+  <section class="section autor" aria-labelledby="autor-title">
+    <img class="autor__foto" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva" loading="lazy">
+    <div class="autor__texto"><p class="eyebrow">SOBRE O AUTOR</p><h2 id="autor-title">Marcos de Mello Silva</h2>
+      <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
+      <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
     </div>
+    <div class="autor__origem"><blockquote>“Amor em todos os cantos nasceu de uma ferida.”</blockquote><span class="pending-label">LER O MANIFESTO DE AMOR</span><!-- Destino pendente no handoff: sem href. --></div>
   </section>
 
-  <section class="redes">
-    <p class="redes__label">Acompanhe Fissura</p>
-    <div class="redes__botoes">
-      <a class="redes__botao" href="https://www.instagram.com/marxmellos/" target="_blank" rel="noopener noreferrer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8CE8E" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg>
-        Instagram
-      </a>
-      <a class="redes__botao" href="https://www.threads.com/@marxmellos" target="_blank" rel="noopener noreferrer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8CE8E" stroke-width="2"><path d="M12 2a7 7 0 0 0-7 7v3a7 7 0 0 0 14 0"></path><path d="M9 12v-2a3 3 0 0 1 6 0v4a3 3 0 0 1-6 0"></path></svg>
-        Threads
-      </a>
-    </div>
-    <div class="redes__linha"></div>
+  <section class="section vocabulary" aria-labelledby="ideias-title"><h2 id="ideias-title" class="ruled-title">IDEIAS QUE ATRAVESSAM FISSURA</h2><p>BIM Literário · Geografia dramática · Teocracia solar · Arquitetura musical · Engenharia do afeto · Incabência</p></section>
+
+  <section class="section editorial-faq" aria-labelledby="perguntas-title"><h2 id="perguntas-title" class="ruled-title">PERGUNTAS SOBRE FISSURA</h2>
+    <!-- Respostas aprovadas pendentes: perguntas estáticas, sem acordeões vazios. -->
+    <ul class="question-list"><li>É uma história de amor?</li><li>De onde saíram os personagens?</li><li>Quanto disso veio da vida real?</li><li>Por que um homem escreveu uma protagonista mulher?</li><li>Por que Fissura?</li><li>É um livro só para mulheres?</li></ul>
   </section>
+
+  <section class="closing" aria-label="Comprar Fissura"><div class="section"><p>AMOR <span>em</span> TODOS <span>os</span> CANTOS</p><a class="button" href="#comprar">COMPRE AQUI</a></div></section>
+
+  <section class="section continue" aria-labelledby="continue-title"><div><h2 id="continue-title" class="ruled-title">CONTINUE POR AQUI</h2><h3>Marcos de Mello Silva</h3>
+    <div class="social-links"><a href="https://www.instagram.com/marxmellos/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://www.threads.com/@marxmellos" target="_blank" rel="noopener noreferrer">Threads</a><span>LinkedIn</span><span>Facebook</span></div>
+    <!-- Perfis LinkedIn e Facebook pendentes; somente o artigo abaixo tem URL confirmada. -->
+    </div><article class="editorial-card"><p class="eyebrow">BIM LITERÁRIO · LINKEDIN</p><h3>Construí um romance usando BIM, sem perceber</h3><a class="text-link" href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7489486231718772738/" target="_blank" rel="noopener noreferrer">LER NO LINKEDIN <span aria-hidden="true">→</span></a></article>
+  </section>
+
+  <section class="universe" aria-labelledby="universo-title"><div class="section"><h2 id="universo-title" class="ruled-title">O UNIVERSO CONTINUA</h2><div class="universe__grid"><div><h3>Crônicas de Amor em Todos os Cantos</h3><p>EM BREVE</p></div><div><h3>Amor em Todos os Cantos — Ruptura</h3><p>VEM AÍ</p></div></div></div></section>
 
 </main>
 
@@ -253,6 +275,72 @@
   <p class="footer__texto">© Marcos de Mello Silva</p>
 </footer>
 
+<script>
+(function () {
+  document.querySelectorAll('[data-carousel]').forEach(function (section) {
+    var track = section.querySelector('[data-track]');
+    var items = Array.from(track.children);
+    var controls = section.querySelector('.carousel-controls');
+    var navigation = section.querySelector('.voices-nav');
+    var status = section.querySelector('[data-carousel-status]');
+    var selected = 0;
+    function offset(index) { return items[index].getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft; }
+    function nearest() {
+      return items.reduce(function (best, item, index) { return Math.abs(offset(index) - track.scrollLeft) < Math.abs(offset(best) - track.scrollLeft) ? index : best; }, 0);
+    }
+    function show(index) {
+      selected = Math.max(0, Math.min(items.length - 1, index));
+      track.scrollTo({left: offset(selected), behavior: 'instant'});
+      update();
+    }
+    function update() {
+      var overflow = track.scrollWidth > track.clientWidth + 2;
+      controls.hidden = !overflow;
+      // aria-disabled retains keyboard focus at either end of the carousel.
+      controls.querySelector('[data-step="-1"]').setAttribute('aria-disabled', track.scrollLeft < 2);
+      controls.querySelector('[data-step="1"]').setAttribute('aria-disabled', track.scrollLeft >= track.scrollWidth - track.clientWidth - 2);
+      if (navigation) {
+        var bounds = track.getBoundingClientRect();
+        var visibleHeights = items.filter(function (item) {
+          var rect = item.getBoundingClientRect();
+          return Math.min(rect.right, bounds.right) - Math.max(rect.left, bounds.left) > rect.width / 2;
+        }).map(function (item) { return item.getBoundingClientRect().height; });
+        if (visibleHeights.length) track.style.height = Math.ceil(Math.max.apply(null, visibleHeights) + 8) + 'px';
+      }
+      if (navigation) navigation.querySelectorAll('[data-slide]').forEach(function (button) {
+        button.setAttribute('aria-pressed', Number(button.dataset.slide) === selected);
+      });
+      status.textContent = items[selected].querySelector('h3').textContent + ' · ' + (selected + 1) + ' de ' + items.length;
+    }
+    controls.querySelectorAll('[data-step]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (button.getAttribute('aria-disabled') !== 'true') show(nearest() + Number(button.dataset.step));
+      });
+    });
+    if (navigation) {
+      navigation.hidden = false;
+      navigation.querySelectorAll('[data-slide]').forEach(function (button) {
+        button.addEventListener('click', function () { show(Number(button.dataset.slide)); });
+      });
+    }
+    track.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); show(nearest() + (event.key === 'ArrowRight' ? 1 : -1)); }
+      if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); show(event.key === 'Home' ? 0 : items.length - 1); }
+    });
+    track.addEventListener('scroll', function () {
+      var closest = nearest();
+      // Preserve an explicitly selected item when the last desktop pair shares an offset.
+      var chosen = items[selected].getBoundingClientRect();
+      var bounds = track.getBoundingClientRect();
+      if (chosen.left < bounds.left - 2 || chosen.right > bounds.right + 2) selected = closest;
+      update();
+    }, {passive: true});
+    window.addEventListener('resize', update);
+    if (document.fonts) document.fonts.ready.then(update);
+    update();
+  });
+}());
+</script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/direct-sales.js" defer></script>
 </body>
