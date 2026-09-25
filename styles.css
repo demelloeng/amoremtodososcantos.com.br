@@ -160,8 +160,8 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .continue { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 38px; }
 .continue h3 { font-size: 24px; margin: 24px 0 16px; }
 .social-links { display: flex; flex-wrap: wrap; gap: 12px; }
-.social-links a { gap: 8px; }
-.social-icon { flex: 0 0 20px; width: 20px; height: 20px; }
+.social-links a { gap: 10px; }
+.social-icon { display: block; flex: 0 0 32px; width: 32px; height: 32px; object-fit: contain; }
 .social-links a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
 .social-links a, .social-links > span { min-height: 48px; padding: 12px 18px; border: 1px solid #abb8cc; border-radius: 4px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .social-links > span { color: #697488; border-color: var(--line); }
@@ -308,3 +308,9 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .card-group > .card { flex: 1; }
 .review-link { display: flex; min-height: 44px; align-items: center; justify-content: center; padding: 8px 4px; color: var(--azul); font-size: 12px; line-height: 1.4; text-align: center; text-underline-offset: 3px; }
 .pending-label strong { display: inline-block; margin-top: 8px; letter-spacing: 1px; }
+
+/* Branded Skoob mark remains visible beside the original review link. */
+.review-link:has(.review-icon) { gap: 8px; }
+.review-icon { display: block; flex: 0 0 24px; width: 24px; height: 24px; }
+.purchase-review { margin-top: 18px; display: flex; justify-content: center; }
+.purchase-review .review-link { padding: 10px 18px; border: 1px solid #b9ddef; border-radius: 6px; background: #f1f9ff; font-size: 14px; font-weight: 600; }
