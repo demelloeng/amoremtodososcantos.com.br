@@ -160,6 +160,9 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .continue { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 38px; }
 .continue h3 { font-size: 24px; margin: 24px 0 16px; }
 .social-links { display: flex; flex-wrap: wrap; gap: 12px; }
+.social-links a { gap: 8px; }
+.social-icon { flex: 0 0 20px; width: 20px; height: 20px; }
+.social-links a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
 .social-links a, .social-links > span { min-height: 48px; padding: 12px 18px; border: 1px solid #abb8cc; border-radius: 4px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .social-links > span { color: #697488; border-color: var(--line); }
 .social-links a:hover, .text-link:hover { background: #edf1f6; }
