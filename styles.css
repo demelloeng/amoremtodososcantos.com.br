@@ -103,6 +103,16 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .direct__summary dd { margin: 0; text-align: right; }
 .direct__total { border-top: 1px solid var(--line); font-weight: 800; }
 #direct-loading { font-size: 13px; margin-top: 10px; }
+.direct__quantity { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.direct__quantity .direct__label { margin-bottom: 0; }
+.direct__stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 4px; }
+.direct__stepper button { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: var(--azul); font-size: 18px; font-weight: 800; cursor: pointer; }
+.direct__stepper button:disabled { opacity: .4; cursor: not-allowed; }
+.direct__stepper button:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px; }
+.direct__stepper output { min-width: 32px; text-align: center; font-weight: 800; }
+.direct__hint, .direct__availability, .direct__order-status { font-size: 13px; line-height: 1.4; margin: 0 0 10px; }
+.direct__hint a { color: inherit; }
+.direct__order-status { margin-top: 10px; font-weight: 700; }
 
 .accordion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 16px; align-items: start; }
 details { border: 1px solid var(--line); border-radius: 4px; font-family: var(--serif); font-size: 20px; }

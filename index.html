@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=economico-01-2">
+<link rel="stylesheet" href="styles.css?v=macro-a-01">
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NGG2M69HNW"></script>
 <script>
@@ -191,15 +191,23 @@
           <p id="direct-payment-methods" class="direct__payment"></p>
           <p id="direct-payment-installments" class="direct__payment" hidden></p>
           <div id="direct-flow" hidden>
+            <p id="direct-availability" class="direct__availability" role="status" hidden></p>
+            <div class="direct__quantity" role="group" aria-labelledby="direct-quantity-label">
+              <span id="direct-quantity-label" class="direct__label">Quantidade</span>
+              <div class="direct__stepper"><button id="direct-quantity-minus" type="button" aria-label="Diminuir quantidade">−</button><output id="direct-quantity" aria-live="polite">1</output><button id="direct-quantity-plus" type="button" aria-label="Aumentar quantidade">+</button></div>
+            </div>
+            <p id="direct-quantity-contact" class="direct__hint" hidden>Para mais de 3 exemplares, escreva para <a href="mailto:marcos@demelloeng.com.br">marcos@demelloeng.com.br</a>.</p>
             <label class="direct__label" for="direct-cep">CEP de entrega</label>
             <div class="direct__cep"><input id="direct-cep" inputmode="numeric" maxlength="9" placeholder="00000-000"><button id="direct-quote" type="button">Calcular frete</button></div>
             <p id="direct-loading" hidden>Calculando frete…</p><p id="direct-error" class="direct__error" role="alert" hidden></p>
             <dl id="direct-summary" class="direct__summary" hidden>
-              <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Livro</dt><dd id="direct-book">—</dd></div>
+              <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Quantidade</dt><dd id="direct-quantity-summary">—</dd></div>
+              <div><dt>Preço unitário</dt><dd id="direct-unit">—</dd></div><div><dt>Subtotal</dt><dd id="direct-subtotal">—</dd></div>
               <div><dt>Frete cobrado</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
               <div><dt>Prazo</dt><dd id="direct-days">—</dd></div><div class="direct__total"><dt>Total</dt><dd id="direct-total">—</dd></div>
             </dl>
             <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
+            <p id="direct-order-status" class="direct__order-status" role="status" hidden></p>
           </div>
 
         </article>
