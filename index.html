@@ -82,6 +82,16 @@
 
 <main id="conteudo">
 
+  <p id="checkout-return" class="checkout-return" role="status" hidden></p>
+
+  <section class="section flim" aria-labelledby="flim-title">
+    <p class="eyebrow">FLIM 2026</p>
+    <div class="flim__content">
+      <h2 id="flim-title">Amor em todos os cantos — Fissura será lançado na FLIM 2026.</h2>
+      <p><span>Maringá</span><span>14 a 18 de outubro de 2026</span></p>
+    </div>
+  </section>
+
   <section class="comprar" id="comprar" aria-labelledby="comprar-title">
     <div class="comprar__inner">
       <h2 class="comprar__title" id="comprar-title">Onde comprar</h2>
@@ -241,10 +251,12 @@
     <div class="section">
       <div class="section-heading"><h2 id="vozes-title">O QUE ESTÃO DIZENDO</h2><div class="carousel-controls" hidden><button type="button" data-step="-1" aria-controls="voices-track" aria-label="Depoimento anterior">‹</button><button type="button" data-step="1" aria-controls="voices-track" aria-label="Próximo depoimento">›</button></div></div>
       <div class="voices-track" id="voices-track" data-track tabindex="0" aria-label="Depoimentos de leitores">
-        <article class="voice" id="voz-aline"><img src="assets/leitor-aline.jpg" alt="Aline" loading="lazy"><div><h3>Aline</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Você criou um lugar onde eu entrei e me senti em casa.”</p><p class="voice__after">“Quando eu terminei, senti saudade deles.”</p></blockquote></div></article>
-        <article class="voice" id="voz-ana"><img src="assets/leitor-ana.jpg" alt="Ana" loading="lazy"><div><h3>Ana</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.”</p></blockquote></div></article>
-        <article class="voice" id="voz-saulo"><img src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy"><div><h3>Saulo</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.”</p></blockquote></div></article>
-        <article class="voice" id="voz-karina"><img src="assets/leitor-karina.jpg" alt="Karina" loading="lazy"><div><h3>Karina</h3><p class="voice__source">DEPOIMENTO DIRETO</p><blockquote><p>“E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.”</p></blockquote></div></article>
+        <article class="voice" id="voz-aline"><img src="assets/leitor-aline.jpg" alt="Aline" loading="lazy"><div><h3>Aline</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Você criou um lugar onde eu entrei e me senti em casa.”</p><p class="voice__after">“Quando eu terminei, senti saudade deles.”</p></blockquote></div></article>
+        <article class="voice" id="voz-ana"><img src="assets/leitor-ana.jpg" alt="Ana" loading="lazy"><div><h3>Ana</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.”</p></blockquote></div></article>
+        <article class="voice" id="voz-saulo"><img src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy"><div><h3>Saulo</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.”</p></blockquote></div></article>
+        <article class="voice" id="voz-karina"><img src="assets/leitor-karina.jpg" alt="Karina" loading="lazy"><div><h3>Karina</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.”</p></blockquote></div></article>
+        <article class="voice" id="voz-rafael"><span class="voice__initial" aria-hidden="true">R</span><div><h3>Rafael</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Obra literária incrível! Impossível não se prender a trama!!!”</p></blockquote></div></article>
+        <article class="voice" id="voz-fabio"><span class="voice__initial" aria-hidden="true">F</span><div><h3>Fábio</h3><p class="voice__source"><img src="assets/logo-amazon.png" alt="" aria-hidden="true">Amazon</p><blockquote><p><strong>Ótimo livro!</strong></p><p>“Aguardando o livro físico também! 😅”</p></blockquote></div></article>
       </div>
       <p class="sr-only" data-carousel-status aria-live="polite"></p>
       <div class="voices-nav" aria-label="Escolher depoimento" hidden>
@@ -252,6 +264,8 @@
         <button type="button" data-slide="1" aria-controls="voices-track"><img src="assets/leitor-ana.jpg" alt="" loading="lazy"><span>Ana</span></button>
         <button type="button" data-slide="2" aria-controls="voices-track"><img src="assets/leitor-saulo.jpg" alt="" loading="lazy"><span>Saulo</span></button>
         <button type="button" data-slide="3" aria-controls="voices-track"><img src="assets/leitor-karina.jpg" alt="" loading="lazy"><span>Karina</span></button>
+        <button type="button" data-slide="4" aria-controls="voices-track"><span class="voices-nav__initial" aria-hidden="true">R</span><span>Rafael</span></button>
+        <button type="button" data-slide="5" aria-controls="voices-track"><span class="voices-nav__initial" aria-hidden="true">F</span><span>Fábio</span></button>
       </div>
       <div class="center-action"><a class="button" href="#comprar">COMPRE AQUI</a></div>
     </div>

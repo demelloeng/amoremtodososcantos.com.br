@@ -12,9 +12,26 @@
   var kindleUnlimited = document.getElementById('amazon-kindle-unlimited');
   var paymentMethods = document.getElementById('direct-payment-methods');
   var paymentInstallments = document.getElementById('direct-payment-installments');
+  var checkoutReturn = document.getElementById('checkout-return');
   function money(cents) { return new Intl.NumberFormat('pt-BR', {style:'currency',currency:'BRL'}).format(cents / 100); }
   function channelName(id) { return {direct:'Compra direta',amazon:'Amazon',uiclap:'UICLAP',clube_autores:'Clube de Autores'}[id]; }
   function fail(message) { errorBox.textContent = message; errorBox.hidden = false; }
+  function showCheckoutReturn() {
+    var state = new URLSearchParams(window.location.search).get('checkout');
+    var messages = {
+      'production-success': 'Você retornou do checkout. Isso não confirma o pagamento; inclusive o Pix depende da confirmação financeira.',
+      'sandbox-success': 'Você retornou do checkout de teste. Isso não confirma o pagamento.',
+      'production-cancel': 'A etapa de checkout foi cancelada. Nenhum pagamento foi confirmado.',
+      'sandbox-cancel': 'A etapa de checkout de teste foi cancelada. Nenhum pagamento foi confirmado.',
+      'production-expired': 'A sessão de checkout expirou. Nenhum pagamento foi confirmado.',
+      'sandbox-expired': 'A sessão de checkout de teste expirou. Nenhum pagamento foi confirmado.'
+    };
+    if (checkoutReturn && messages[state]) {
+      checkoutReturn.textContent = messages[state];
+      checkoutReturn.hidden = false;
+    }
+  }
+  showCheckoutReturn();
   function showQuote(quote, confirmed) {
     currentQuote = quote; currentSummary = confirmed;
     document.getElementById('direct-region').textContent = quote.is_curitiba ? 'Curitiba' : 'Fora de Curitiba';
@@ -98,20 +115,31 @@
     if (!directSaleActive || !currentQuote || !currentSummary || buy.disabled) return;
     if (quotedCep !== cepInput.value) { invalidateQuote(); return; }
     var revision = quoteRevision, destinationCep = quotedCep;
+    var checkoutWindow = window.open('about:blank', '_blank');
+    if (!checkoutWindow) {
+      fail('Não foi possível abrir a janela do checkout. Permita pop-ups para este site e tente novamente.');
+      buy.disabled = false;
+      return;
+    }
+    checkoutWindow.opener = null;
     buy.disabled = true; errorBox.hidden = true;
     fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({destination_cep:destinationCep, confirmed_summary:currentSummary})})
       .then(function (response) { return response.json().then(function (data) { return {status:response.status, ok:response.ok, data:data}; }); })
       .then(function (result) {
-        if (revision !== quoteRevision || destinationCep !== cepInput.value) return;
+        if (revision !== quoteRevision || destinationCep !== cepInput.value) {
+          checkoutWindow.close(); return;
+        }
         if (result.status === 409 && result.data.error && result.data.error.code === 'QUOTE_CHANGED') {
+          checkoutWindow.close();
           showQuote(result.data.quote, result.data.summary);
           fail('Os valores foram atualizados. Confira e clique em Comprar novamente.');
           return;
         }
         if (!result.ok) throw new Error(result.data.error && result.data.error.message);
-        window.open(result.data.checkout.url, '_blank', 'noopener');
+        checkoutWindow.location = result.data.checkout.url;
       })
       .catch(function (error) {
+        checkoutWindow.close();
         if (revision !== quoteRevision || destinationCep !== cepInput.value || !currentQuote) return;
         fail(error.message || 'Checkout indisponível.'); buy.disabled = false;
       });

@@ -20,22 +20,33 @@ function element() {
 }
 function response(status, data) { return {ok: status >= 200 && status < 300, status, json: async () => data}; }
 async function flush() { for (let i = 0; i < 5; i++) await new Promise(resolve => setImmediate(resolve)); }
-async function harness(active = true) {
+async function harness(active = true, options = {}) {
   const ids = Object.fromEntries([
     'direct-cep', 'direct-card', 'direct-flow', 'direct-coming-soon', 'direct-buy', 'direct-error',
     'direct-loading', 'direct-summary', 'amazon-kindle-unlimited', 'direct-payment-methods',
     'direct-payment-installments', 'direct-quote', 'direct-region', 'direct-book', 'direct-shipping',
-    'direct-real', 'direct-real-row', 'direct-days', 'direct-total'
+    'direct-real', 'direct-real-row', 'direct-days', 'direct-total', 'checkout-return'
   ].map(id => [id, element()]));
   ids['direct-cep'].value = '01419100'; ids['direct-buy'].disabled = true;
-  const pending = [], opened = [], data = structuredClone(config);
+  const pending = [], opened = [], popupWindows = [], data = structuredClone(config);
   data.direct_sale.status = active ? 'active' : 'coming_soon';
   const fetch = (url, options) => url === '/config/prices.json' ? Promise.resolve(response(200, data)) :
     new Promise(resolve => pending.push({url, body: JSON.parse(options.body), resolve}));
+  const window = {
+    location: {search: options.search || ''},
+    open: (...args) => {
+      opened.push(args);
+      if (options.blockPopup) return null;
+      const popup = {location: 'about:blank', opener: {}, closed: false,
+        close() { this.closed = true; }};
+      popupWindows.push(popup);
+      return popup;
+    }
+  };
   vm.runInNewContext(source, {document: {getElementById: id => ids[id], querySelectorAll: () => []},
-    window: {open: (...args) => opened.push(args)}, fetch, Intl, Error});
+    window, fetch, Intl, Error, URLSearchParams});
   await flush();
-  return {ids, pending, opened, flush,
+  return {ids, pending, opened, popupWindows, flush,
     respond(index, status, payload) { pending[index].resolve(response(status, payload)); }};
 }
 
@@ -48,10 +59,13 @@ test('quote stores server summary; checkout sends it and opens stable URL', asyn
   assert.equal(h.ids['direct-total'].textContent, 'R$ 72,36');
   assert.equal(h.ids['direct-summary'].hidden, false);
   h.ids['direct-buy'].fire('click');
+  assert.equal(h.opened.length, 1);
+  assert.equal(h.opened[0][0], 'about:blank');
   assert.deepEqual(h.pending[1].body.confirmed_summary, summary);
   h.respond(1, 200, {ok: true, checkout: {url: 'https://example.test/checkout'}, summary}); await h.flush();
   assert.equal(h.opened.length, 1);
-  assert.equal(h.opened[0][0], 'https://example.test/checkout');
+  assert.equal(h.popupWindows[0].location, 'https://example.test/checkout');
+  assert.equal(h.popupWindows[0].closed, false);
 });
 
 test('changed quote requires a second click and uses updated server values', async () => {
@@ -61,7 +75,8 @@ test('changed quote requires a second click and uses updated server values', asy
   h.respond(1, 409, {ok: false, error: {code: 'QUOTE_CHANGED', message: 'Os valores foram atualizados.'},
     quote: {...quote, charged_amount_cents: 1500, real_amount_cents: 1600, delivery_days: 3}, summary: changed});
   await h.flush();
-  assert.equal(h.opened.length, 0);
+  assert.equal(h.opened.length, 1);
+  assert.equal(h.popupWindows[0].closed, true);
   assert.equal(h.ids['direct-error'].textContent,
     'Os valores foram atualizados. Confira e clique em Comprar novamente.');
   assert.equal(h.ids['direct-buy'].disabled, false);
@@ -74,7 +89,8 @@ test('changed quote requires a second click and uses updated server values', asy
   h.ids['direct-buy'].fire('click');
   assert.deepEqual(h.pending[2].body.confirmed_summary, changed);
   h.respond(2, 200, {ok: true, checkout: {url: 'https://example.test/second'}, summary: changed}); await h.flush();
-  assert.equal(h.opened[0][0], 'https://example.test/second');
+  assert.equal(h.opened.length, 2);
+  assert.equal(h.popupWindows[1].location, 'https://example.test/second');
 });
 
 test('CEP edits invalidate quote and stale quote and checkout replies', async () => {
@@ -89,7 +105,8 @@ test('CEP edits invalidate quote and stale quote and checkout replies', async ()
   h.ids['direct-buy'].fire('click');
   h.ids['direct-cep'].value = '80000001'; h.ids['direct-cep'].fire('input');
   h.respond(2, 200, {ok: true, checkout: {url: 'https://example.test/stale'}}); await h.flush();
-  assert.equal(h.opened.length, 0);
+  assert.equal(h.opened.length, 1);
+  assert.equal(h.popupWindows[0].closed, true);
   assert.equal(h.ids['direct-summary'].hidden, true);
   assert.equal(h.ids['direct-buy'].disabled, true);
 });
@@ -101,3 +118,26 @@ test('coming soon leaves checkout flow unavailable', async () => {
   assert.equal(h.pending.length, 0);
   assert.equal(h.opened.length, 0);
 });
+
+test('blocked popup aborts before checkout creation', async () => {
+  const h = await harness(true, {blockPopup: true});
+  h.ids['direct-quote'].fire('click');
+  h.respond(0, 200, {ok: true, quote, summary}); await h.flush();
+  h.ids['direct-buy'].fire('click');
+  assert.equal(h.pending.length, 1);
+  assert.match(h.ids['direct-error'].textContent, /janela/i);
+  assert.equal(h.ids['direct-buy'].disabled, false);
+});
+
+for (const [state, message] of [
+  ['success', 'não confirma o pagamento'],
+  ['cancel', 'cancelada'],
+  ['expired', 'expirou'],
+]) {
+  test(`checkout return ${state} reports only the known state`, async () => {
+    const h = await harness(true, {search: `?checkout=production-${state}`});
+    assert.equal(h.ids['checkout-return'].hidden, false);
+    assert.match(h.ids['checkout-return'].textContent.toLowerCase(), new RegExp(message));
+    assert.doesNotMatch(h.ids['checkout-return'].textContent.toLowerCase(), /pagamento confirmado|estoque/);
+  });
+}
