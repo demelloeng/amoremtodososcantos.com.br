@@ -113,6 +113,16 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .direct__hint, .direct__availability, .direct__order-status { font-size: 13px; line-height: 1.4; margin: 0 0 10px; }
 .direct__hint a { color: inherit; }
 .direct__order-status { margin-top: 10px; font-weight: 700; }
+.footer__links { font-size: 13px; margin-top: 8px; }
+.footer__links a, .footer__link-button { color: inherit; text-decoration: underline; }
+.footer__link-button { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+.privacy-banner { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 50; max-width: 720px; margin: 0 auto; padding: 16px; background: #fff; color: var(--azul); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 6px 24px rgba(19, 41, 71, .18); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.privacy-banner__text { flex: 1 1 320px; font-size: 14px; line-height: 1.5; margin: 0; }
+.privacy-banner__text a { color: inherit; }
+.privacy-banner__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.privacy-banner__actions button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--azul); border-radius: 4px; font-weight: 800; font-size: 13px; cursor: pointer; background: #fff; color: var(--azul); }
+.privacy-banner__actions button:first-child { background: var(--azul); color: #fff; }
+.privacy-banner button:focus-visible, .footer__link-button:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px; }
 
 .accordion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 16px; align-items: start; }
 details { border: 1px solid var(--line); border-radius: 4px; font-family: var(--serif); font-size: 20px; }
@@ -339,3 +349,8 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .card-group--direct:has(> #direct-card[hidden]) { display: none; }
 .review-link { gap: 8px; }
 .review-icon { display: block; flex: 0 0 24px; width: 24px; height: 24px; object-fit: contain; }
+.policy__main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; color: var(--azul); line-height: 1.6; font-size: 16px; }
+.policy__main h1 { font-size: 30px; margin: 16px 0 8px; }
+.policy__main h2 { font-size: 20px; margin: 28px 0 8px; }
+.policy__main a { color: inherit; }
+.policy__main code { font-size: 14px; background: #f2f4f7; padding: 1px 4px; border-radius: 3px; }

@@ -58,8 +58,13 @@
     return fresh;
   }
 
+  function hasConsent() {
+    return Boolean(window.FissuraPrivacy && window.FissuraPrivacy.hasAnalyticsConsent());
+  }
+
   function trackPurchaseClick(link) {
-    if (typeof gtag !== 'function') {
+    // No collection of any kind without the visitor's analytics permission.
+    if (!hasConsent() || typeof window.gtag !== 'function') {
       return;
     }
 
@@ -67,7 +72,7 @@
     var eventName = link.getAttribute('data-analytics-event');
     var retailerKey = link.getAttribute('data-retailer');
 
-    gtag('event', eventName, {
+    window.gtag('event', eventName, {
       destination: retailerKey,
       retailer: RETAILER_NAMES[retailerKey] || retailerKey,
       product_format: link.getAttribute('data-product-format'),
@@ -86,7 +91,12 @@
   }
 
   function init() {
-    getSessionAttribution();
+    if (hasConsent()) {
+      getSessionAttribution();
+    }
+    window.addEventListener('fissura:analytics-consent', function () {
+      getSessionAttribution();
+    });
 
     var links = document.querySelectorAll('[data-analytics-event]');
     links.forEach(function (link) {

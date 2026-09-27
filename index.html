@@ -26,15 +26,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=macro-a-01">
+<link rel="stylesheet" href="styles.css?v=macro-b-01">
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NGG2M69HNW"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-NGG2M69HNW');
-</script>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -320,7 +313,13 @@
 
 <footer class="footer">
   <p class="footer__texto">© Marcos de Mello Silva</p>
+  <p class="footer__links"><a href="privacidade.html">Política de privacidade</a> · <button id="privacy-preferences" type="button" class="footer__link-button">Preferências de privacidade</button></p>
 </footer>
+
+<section id="privacy-banner" class="privacy-banner" role="region" aria-label="Preferências de privacidade" hidden>
+  <p class="privacy-banner__text">Usamos o Google Analytics apenas se você permitir, para medir visitas e cliques nos canais de compra. A compra direta funciona sem essa medição. <a href="privacidade.html">Política de privacidade</a>.</p>
+  <div class="privacy-banner__actions"><button id="privacy-accept" type="button">Permitir medição</button><button id="privacy-reject" type="button">Recusar</button></div>
+</section>
 
 <script>
 (function () {
@@ -388,6 +387,7 @@
   });
 }());
 </script>
+<script src="assets/consent.js" defer></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/direct-sales.js" defer></script>
 </body>

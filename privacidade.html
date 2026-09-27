@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de privacidade — Amor em todos os cantos</title>
+<meta name="description" content="Como o site do livro Fissura trata dados de visitantes e compradores.">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="styles.css?v=macro-b-01">
+</head>
+<body class="policy">
+<main class="policy__main" id="conteudo">
+<p><a href="/">← Voltar ao site</a></p>
+<h1>Política de privacidade</h1>
+<p>Última atualização: 27 de setembro de 2026.</p>
+
+<p>Este site divulga o livro <em>Fissura</em> (série Amor em todos os cantos) e permite a compra direta de
+exemplares autografados. O controlador dos dados é Marcos de Mello Silva. Esta política descreve somente o que
+o site realmente faz, de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).</p>
+
+<h2>Navegação no site</h2>
+<ul>
+  <li><strong>GitHub Pages</strong> hospeda as páginas. Como qualquer servidor web, recebe dados técnicos da
+    requisição (como endereço IP e navegador) para entregar o conteúdo.</li>
+  <li><strong>Google Fonts</strong> fornece as fontes tipográficas; ao carregar a página, o navegador faz uma
+    requisição aos servidores do Google, que recebem o endereço IP.</li>
+  <li>Os links para Amazon, UICLAP, Clube de Autores, Skoob e redes sociais levam a sites de terceiros, com
+    políticas próprias.</li>
+</ul>
+
+<h2>Medição de audiência (somente com consentimento)</h2>
+<p>O site usa o <strong>Google Analytics 4</strong> para medir visitas e cliques nos canais de compra
+(Amazon, UICLAP, Clube de Autores), incluindo origem da visita (parâmetros UTM e site de referência). O
+Google Analytics <strong>só é carregado depois que você escolhe “Permitir medição”</strong>; sem essa
+escolha, nenhum script do Google Analytics é carregado e nenhum evento é enviado. Os sinais do Google e a
+personalização de anúncios ficam desativados. A base legal é o seu consentimento.</p>
+<p>Você pode rever a escolha a qualquer momento pelo botão <strong>Preferências de privacidade</strong>, no
+rodapé da página inicial. Ao recusar, o site desativa o Google Analytics e apaga os cookies <code>_ga</code>
+deste domínio.</p>
+
+<h2>Compra direta</h2>
+<ul>
+  <li>Para calcular o frete, o site envia o <strong>CEP</strong> de entrega e a quantidade ao nosso servidor, que
+    roda no <strong>Google Cloud</strong> (Cloud Run, região de São Paulo) e consulta a
+    <strong>SuperFrete</strong> com o CEP e as medidas do pacote.</li>
+  <li>Ao comprar, o pedido é registrado no <strong>Firestore</strong> (Google Cloud, São Paulo) com número do
+    pedido, CEP de entrega, quantidade, valores, prazo e situação do pagamento e da entrega.</li>
+  <li>O pagamento é feito no checkout do <strong>Asaas</strong>, que coleta os dados do pagador (como nome,
+    e-mail, CPF e endereço) conforme a política dele. Nosso servidor consulta no Asaas a situação do pagamento
+    e o CEP do pagador para conferir se coincide com o CEP cotado antes do envio.</li>
+  <li>A base legal é a execução do contrato de compra e o cumprimento de obrigações legais. Os dados do pedido
+    são mantidos pelo tempo necessário para entrega, atendimento e obrigações legais e fiscais.</li>
+</ul>
+
+<h2>Armazenamento no navegador</h2>
+<ul>
+  <li><code>localStorage</code>, chave <code>fissura_privacy_prefs_v1</code>: guarda sua escolha sobre a
+    medição (permitida ou recusada) e a data da escolha.</li>
+  <li><code>sessionStorage</code>, chaves <code>ma-fissura:order</code> e <code>ma-fissura:attempt</code>:
+    número do pedido, credencial de consulta do pedido e identificador da tentativa de compra, apagados quando
+    a aba é fechada. São necessários para o funcionamento da compra.</li>
+  <li><code>sessionStorage</code>, chave <code>fissura_attribution_session</code>: origem da visita, gravada
+    somente se você permitir a medição.</li>
+  <li>Cookies <code>_ga</code>: criados pelo Google Analytics somente após o seu consentimento.</li>
+</ul>
+
+<h2>Seus direitos</h2>
+<p>Você pode pedir confirmação, acesso, correção, anonimização, portabilidade ou eliminação dos seus dados,
+e informações sobre compartilhamento, escrevendo para
+<a href="mailto:marcos@demelloeng.com.br">marcos@demelloeng.com.br</a>. Também pode retirar o consentimento
+da medição a qualquer momento pelas Preferências de privacidade.</p>
+</main>
+</body>
+</html>
