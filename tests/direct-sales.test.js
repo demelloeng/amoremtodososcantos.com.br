@@ -28,12 +28,13 @@ const IDS = [
   'direct-payment-installments', 'direct-quote', 'direct-region', 'direct-unit', 'direct-quantity-summary',
   'direct-subtotal', 'direct-shipping', 'direct-real', 'direct-real-row', 'direct-days', 'direct-total',
   'checkout-return', 'direct-quantity', 'direct-quantity-minus', 'direct-quantity-plus',
-  'direct-quantity-contact', 'direct-availability', 'direct-order-status'
+  'direct-quantity-contact', 'direct-availability', 'direct-order-status', 'direct-active-offer'
 ];
 
 function element() {
   return {hidden: false, disabled: false, textContent: '', value: '', dataset: {}, listeners: {},
     attributes: {},
+    getBoundingClientRect() { return {top: 0, bottom: 200}; },
     addEventListener(type, fn) { this.listeners[type] = fn; }, fire(type) { this.listeners[type](); },
     setAttribute(name, value) { this.attributes[name] = value; }, removeAttribute() {},
     querySelector() { return element(); }};
@@ -50,8 +51,9 @@ function storage(initial = {}) {
 async function harness(active = true, options = {}) {
   const ids = Object.fromEntries(IDS.map(id => [id, element()]));
   ids['direct-cep'].value = '01419100'; ids['direct-buy'].disabled = true;
-  const pending = [], opened = [], popupWindows = [], requests = [], data = structuredClone(config);
-  data.direct_sale.status = active ? 'active' : 'coming_soon';
+  ids['direct-card'].hidden = true; ids['direct-flow'].hidden = true; ids['checkout-return'].hidden = true;
+  const pending = [], opened = [], popupWindows = [], requests = [], commerceEvents = [], observers = [], data = structuredClone(config);
+  data.direct_sale.status = options.status || (active ? 'active' : 'coming_soon');
   let uuidCounter = 0;
   const session = options.session || storage();
   const local = storage();
@@ -62,12 +64,17 @@ async function harness(active = true, options = {}) {
       return options.inventory ? Promise.resolve(response(200, {ok: true, inventory_status: options.inventory}))
         : Promise.reject(new Error('offline'));
     }
-    return new Promise(resolve => pending.push({url, init, body: init.body ? JSON.parse(init.body) : null, resolve}));
+    return new Promise((resolve, reject) => pending.push({url, init, body: init.body ? JSON.parse(init.body) : null, resolve, reject}));
   };
   const window = {
     location: {search: options.search || ''},
+    innerHeight: 800,
     sessionStorage: session,
     localStorage: local,
+    listeners: {},
+    addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); },
+    removeEventListener(type, fn) { this.listeners[type] = (this.listeners[type] || []).filter(item => item !== fn); },
+    dispatchEvent: event => { if (event.type === 'fissura:commerce') commerceEvents.push(event.detail); },
     open: (...args) => {
       opened.push(args);
       if (options.blockPopup) return null;
@@ -78,12 +85,19 @@ async function harness(active = true, options = {}) {
     }
   };
   const crypto = {randomUUID: () => `00000000-0000-4000-8000-${String(++uuidCounter).padStart(12, '0')}`};
+  function CustomEvent(type, init = {}) { this.type = type; this.detail = init.detail; }
+  function IntersectionObserver(callback) {
+    this.observe = target => observers.push({callback, target, observer: this});
+    this.disconnect = () => {};
+  }
   vm.runInNewContext(source, {document: {getElementById: id => ids[id], querySelectorAll: () => []},
-    window, fetch, Intl, Error, URLSearchParams, JSON, crypto, encodeURIComponent});
+    window, fetch, Intl, Error, URLSearchParams, JSON, crypto, encodeURIComponent, CustomEvent,
+    IntersectionObserver: options.noIntersectionObserver ? undefined : IntersectionObserver});
   await flush();
   const api = pending.filter(item => !item.url.endsWith('/v1/prices'));
-  return {ids, pending, opened, popupWindows, requests, session, local, flush,
-    respond(index, status, payload) { pending[index].resolve(response(status, payload)); }};
+  return {ids, pending, opened, popupWindows, requests, session, local, flush, commerceEvents, observers,
+    respond(index, status, payload) { pending[index].resolve(response(status, payload)); },
+    reject(index, error) { pending[index].reject(error); }};
 }
 
 async function quoted(h, quantity = 1, payload = makeSummary(quantity)) {
@@ -115,14 +129,49 @@ test('markup exposes accessible quantity controls, contact and status regions', 
 
 test('direct purchase is its own block and keeps Skoob as its review channel', () => {
   const directAt = html.indexOf('<div class="card-group card-group--direct">');
-  const retailers = html.slice(html.indexOf('<div class="cards">'), directAt);
+  const alternativesAt = html.indexOf('Prefere comprar por outra plataforma?');
+  const retailers = html.slice(alternativesAt, html.indexOf('</section>', alternativesAt));
   const direct = html.slice(directAt, html.indexOf('</article>', directAt));
+  const directText = direct.replace(/<[^>]+>/g, '');
+  assert.ok(directAt > 0 && alternativesAt > directAt, 'direct offer must precede retailer alternatives in DOM order');
   for (const channel of ['amazon', 'uiclap', 'clube_autores']) {
     assert.match(retailers, new RegExp(`data-price-channel="${channel}"`), channel);
   }
   assert.doesNotMatch(retailers, /id="direct-card"|skoob\.com/i);
   assert.match(direct, /id="direct-card"/);
-  assert.match(direct, /href="https:\/\/www\.skoob\.com\.br\/pt\/book\/122687117"/);
+  assert.doesNotMatch(direct, /skoob\.com/i);
+  for (const approved of ['AGORA DÁ PRA COMPRAR DIRETO COMIGO.', 'O livro já está aqui — impresso, esperando autógrafo e endereço.',
+    'Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.',
+    'R$ 49,99 + frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
+    assert.ok(directText.includes(approved), approved);
+  }
+  assert.ok(html.indexOf('skoob.com.br/pt/book/122687117') > html.indexOf('</article>', directAt));
+});
+
+test('hidden and coming soon states keep retailer alternatives usable', async () => {
+  const hidden = await harness(false, {status: 'hidden'});
+  assert.equal(hidden.ids['direct-card'].hidden, true);
+
+  const coming = await harness(false, {status: 'coming_soon'});
+  assert.equal(coming.ids['direct-card'].hidden, false);
+  assert.equal(coming.ids['direct-coming-soon'].hidden, false);
+  assert.equal(coming.ids['direct-active-offer'].hidden, true);
+  assert.equal(coming.ids['direct-payment-methods'].hidden, true);
+  assert.equal(coming.ids['direct-payment-installments'].hidden, true);
+  assert.equal(coming.ids['direct-flow'].hidden, true);
+  assert.equal(coming.opened.length, 0);
+
+  const active = await harness(true, {status: 'active'});
+  assert.equal(active.ids['direct-card'].hidden, false);
+  assert.equal(active.ids['direct-coming-soon'].hidden, true);
+  assert.equal(active.ids['direct-active-offer'].hidden, false);
+  assert.equal(active.ids['direct-payment-methods'].hidden, false);
+  assert.equal(active.ids['direct-payment-installments'].hidden, false);
+  assert.equal(active.ids['direct-flow'].hidden, false);
+  assert.match(active.ids['direct-payment-methods'].textContent, /Pix ou cartão/);
+  assert.match(active.ids['direct-payment-installments'].textContent, /até 2x/);
+  for (const url of ['https://www.amazon.com.br/dp/B0HB7PR45H', 'https://loja.uiclap.com/titulo/ua200325',
+    'https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2']) assert.ok(html.includes(url));
 });
 
 test('home names the work canonically and drops unavailable content', () => {
@@ -168,6 +217,24 @@ test('quote sends quantity and renders unit, subtotal, shipping, deadline and to
   assert.equal(h.ids['direct-days'].textContent, '2 dias úteis');
   assert.equal(h.ids['direct-total'].textContent, 'R$ 192,16');
   assert.equal(h.ids['direct-buy'].disabled, false);
+  assert.deepEqual(structuredClone(h.commerceEvents.at(-1)), {event: 'add_shipping_info', currency: 'BRL', value: 192.16,
+    quantity: 3, item_id: 'fissura_fisico_direto', item_name: 'Amor em todos os cantos — Fissura', sales_channel: 'direct'});
+});
+
+test('active offer emits view_item only after first real intersection', async () => {
+  const h = await harness();
+  assert.equal(h.commerceEvents.length, 0);
+  assert.equal(h.observers.length, 1);
+  h.observers[0].callback([{target: h.ids['direct-card'], isIntersecting: false, intersectionRatio: 0}], h.observers[0].observer);
+  assert.equal(h.commerceEvents.length, 0);
+  h.observers[0].callback([{target: h.ids['direct-card'], isIntersecting: true, intersectionRatio: 0.5}], h.observers[0].observer);
+  h.observers[0].callback([{target: h.ids['direct-card'], isIntersecting: true, intersectionRatio: 1}], h.observers[0].observer);
+  assert.equal(h.commerceEvents.filter(event => event.event === 'view_item').length, 1);
+});
+
+test('active offer measures a real viewport intersection when IntersectionObserver is unavailable', async () => {
+  const h = await harness(true, {noIntersectionObserver: true});
+  assert.equal(h.commerceEvents.filter(event => event.event === 'view_item').length, 1);
 });
 
 test('changing quantity invalidates the quote', async () => {
@@ -251,6 +318,7 @@ test('popup opens synchronously, waits, then receives the checkout URL', async (
   const h = await harness();
   await quoted(h);
   h.ids['direct-buy'].fire('click');
+  assert.equal(h.commerceEvents.at(-1).event, 'begin_checkout');
   assert.equal(h.opened.length, 1);
   assert.equal(h.opened[0][0], 'about:blank');
   assert.match(h.popupWindows[0].document.body.textContent, /aguarde|preparando/i);
@@ -258,9 +326,66 @@ test('popup opens synchronously, waits, then receives the checkout URL', async (
     access_token: 'secret-token', summary});
   await h.flush();
   assert.equal(h.popupWindows[0].location, 'https://example.test/checkout');
+  assert.equal(h.commerceEvents.at(-1).event, 'direct_checkout_created');
   const saved = JSON.parse(h.session.data['ma-fissura:order']);
   assert.deepEqual(saved, {order_id: 'ord-1', access_token: 'secret-token'});
   assert.equal(JSON.stringify(h.local.data).includes('secret-token'), false);
+});
+
+test('double click cannot duplicate checkout attempt or begin_checkout', async () => {
+  const h = await harness();
+  await quoted(h);
+  h.ids['direct-buy'].fire('click'); h.ids['direct-buy'].fire('click');
+  assert.equal(h.pending.filter(item => item.url.endsWith('/v1/checkout')).length, 1);
+  assert.equal(h.commerceEvents.filter(event => event.event === 'begin_checkout').length, 1);
+  assert.equal(h.opened.length, 1);
+});
+
+test('each successful quote emits one shipping event and a new valid quote can emit another', async () => {
+  const h = await harness();
+  await quoted(h);
+  assert.equal(h.commerceEvents.filter(event => event.event === 'add_shipping_info').length, 1);
+  h.ids['direct-quote'].fire('click');
+  h.respond(h.pending.length - 1, 200, {ok: true, quote, summary}); await h.flush();
+  assert.equal(h.commerceEvents.filter(event => event.event === 'add_shipping_info').length, 2);
+});
+
+test('checkout failures expose only a sanitized technical code to commerce analytics', async () => {
+  const h = await harness();
+  await quoted(h);
+  h.ids['direct-buy'].fire('click');
+  h.respond(1, 502, {ok: false, error: {code: 'CHECKOUT_FAILED', message: 'CEP 01419-100 de Pessoa x@example.test'}});
+  await h.flush();
+  assert.deepEqual(structuredClone(h.commerceEvents.at(-1)), {event: 'direct_checkout_error', error_code: 'CHECKOUT_FAILED'});
+  assert.equal(JSON.stringify(h.commerceEvents).includes('01419'), false);
+  assert.equal(JSON.stringify(h.commerceEvents).includes('example.test'), false);
+  assert.equal(h.commerceEvents.some(event => event.event === 'purchase'), false);
+});
+
+test('checkout network failure emits one sanitized error and keeps the UI recoverable', async () => {
+  const h = await harness();
+  await quoted(h);
+  h.ids['direct-buy'].fire('click');
+  h.reject(1, new Error('network failed for CEP 01419-100 and x@example.test'));
+  await h.flush();
+  const errors = h.commerceEvents.filter(event => event.event === 'direct_checkout_error');
+  assert.equal(h.commerceEvents.filter(event => event.event === 'begin_checkout').length, 1);
+  assert.equal(errors.length, 1);
+  assert.deepEqual(structuredClone(errors[0]), {event: 'direct_checkout_error', error_code: 'CHECKOUT_REQUEST_FAILED'});
+  assert.equal(h.commerceEvents.some(event => event.event === 'direct_checkout_created'), false);
+  assert.equal(h.commerceEvents.some(event => event.event === 'purchase'), false);
+  assert.doesNotMatch(JSON.stringify(errors), /network failed|01419|example\.test/);
+  assert.equal(h.ids['direct-buy'].disabled, false);
+});
+
+test('invalid checkout response emits direct_checkout_error only once', async () => {
+  const h = await harness();
+  await quoted(h);
+  h.ids['direct-buy'].fire('click');
+  h.respond(1, 200, {ok: true}); await h.flush();
+  const errors = h.commerceEvents.filter(event => event.event === 'direct_checkout_error');
+  assert.equal(errors.length, 1);
+  assert.equal(errors[0].error_code, 'INVALID_CHECKOUT_RESPONSE');
 });
 
 test('blocked popup aborts before any reservation', async () => {
@@ -345,8 +470,16 @@ for (const [state, message] of [['success', 'não confirma o pagamento'], ['canc
     assert.equal(h.ids['checkout-return'].hidden, false);
     assert.match(h.ids['checkout-return'].textContent.toLowerCase(), new RegExp(message));
     assert.doesNotMatch(h.ids['checkout-return'].textContent.toLowerCase(), /pagamento confirmado|estoque/);
+    assert.deepEqual(structuredClone(h.commerceEvents[0]), {event: 'direct_checkout_return', return_state: `production-${state}`});
+    assert.equal(h.commerceEvents.some(event => event.event === 'purchase'), false);
   });
 }
+
+test('unrecognized checkout return state is neither shown nor measured', async () => {
+  const h = await harness(true, {search: '?checkout=production-paid'});
+  assert.equal(h.ids['checkout-return'].hidden, true);
+  assert.equal(h.commerceEvents.some(event => event.event === 'direct_checkout_return'), false);
+});
 
 test('return queries order status with bearer header, never URL token', async () => {
   const session = storage({'ma-fissura:order': JSON.stringify({order_id: 'ord-1', access_token: 'secret-token'})});

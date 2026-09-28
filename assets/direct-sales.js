@@ -22,6 +22,19 @@
   var quantityContact = document.getElementById('direct-quantity-contact');
   var availability = document.getElementById('direct-availability');
   var orderStatus = document.getElementById('direct-order-status');
+  var directActiveOffer = document.getElementById('direct-active-offer');
+  var ITEM = {item_id:'fissura_fisico_direto', item_name:'Amor em todos os cantos — Fissura', sales_channel:'direct'};
+  function commerce(eventName, fields) {
+    var detail = {event:eventName};
+    Object.keys(fields || {}).forEach(function (key) { detail[key] = fields[key]; });
+    try { window.dispatchEvent(new CustomEvent('fissura:commerce', {detail:detail})); } catch (e) { /* analytics is optional */ }
+  }
+  function itemFields(quantityValue, value) {
+    var fields = {currency:'BRL', quantity:quantityValue, item_id:ITEM.item_id,
+      item_name:ITEM.item_name, sales_channel:ITEM.sales_channel};
+    if (typeof value === 'number') fields.value = value;
+    return fields;
+  }
   function money(cents) { return new Intl.NumberFormat('pt-BR', {style:'currency',currency:'BRL'}).format(cents / 100); }
   function channelName(id) { return {direct:'Compra direta',amazon:'Amazon',uiclap:'UICLAP',clube_autores:'Clube de Autores'}[id]; }
   function fail(message) { errorBox.textContent = message; errorBox.hidden = false; }
@@ -54,6 +67,7 @@
     if (checkoutReturn && messages[state]) {
       checkoutReturn.textContent = messages[state];
       checkoutReturn.hidden = false;
+      commerce('direct_checkout_return', {return_state:state});
     }
     return Boolean(messages[state]);
   }
@@ -129,13 +143,15 @@
     else if (payment.credit_card_enabled) paymentMethods.textContent = 'Cartão de crédito';
     else paymentMethods.textContent = 'Meios de pagamento a definir';
     var installmentsEnabled = payment.credit_card_enabled && payment.max_installments > 1;
-    paymentInstallments.hidden = !installmentsEnabled;
+    paymentMethods.hidden = true;
+    paymentInstallments.hidden = true;
     paymentInstallments.textContent = installmentsEnabled ?
       'À vista ou em até ' + payment.max_installments + 'x no cartão' : '';
     if (directStatus === 'hidden') {
       directCard.hidden = true;
     } else if (directStatus === 'coming_soon') {
       directCard.hidden = false;
+      directActiveOffer.hidden = true;
       directFlow.hidden = true;
       comingSoon.hidden = false;
       directCard.querySelector('.card__price').textContent = 'Em breve';
@@ -144,8 +160,41 @@
     } else if (directStatus === 'active') {
       directSaleActive = true;
       directCard.hidden = false;
+      directActiveOffer.hidden = false;
       directFlow.hidden = false;
       comingSoon.hidden = true;
+      paymentMethods.hidden = false;
+      paymentInstallments.hidden = !installmentsEnabled;
+      var viewed = false;
+      function recordView() {
+        if (viewed) return;
+        viewed = true;
+        commerce('view_item', itemFields(quantity, 49.99));
+      }
+      if (typeof IntersectionObserver === 'function') {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!viewed && entry.target === directCard && entry.isIntersecting && entry.intersectionRatio > 0) {
+              recordView();
+              observer.disconnect();
+            }
+          });
+        }, {threshold:0.25});
+        observer.observe(directCard);
+      } else {
+        var checkDirectVisibility = function () {
+          var rect = directCard.getBoundingClientRect();
+          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          if (rect.bottom > 0 && rect.top < viewportHeight) {
+            recordView();
+            window.removeEventListener('scroll', checkDirectVisibility);
+            window.removeEventListener('resize', checkDirectVisibility);
+          }
+        };
+        window.addEventListener('scroll', checkDirectVisibility, {passive:true});
+        window.addEventListener('resize', checkDirectVisibility);
+        checkDirectVisibility();
+      }
       fetch(apiBase + '/v1/prices', {cache:'no-store'}).then(function (response) { return response.json(); })
         .then(function (live) { if (live && live.inventory_status) setInventory(live.inventory_status); })
         .catch(function () { /* availability is enforced server-side at checkout */ });
@@ -208,6 +257,7 @@
         if (revision !== quoteRevision || destinationCep !== cepInput.value || requestedQuantity !== quantity) return;
         quotedCep = destinationCep;
         showQuote(data.quote, data.summary);
+        commerce('add_shipping_info', itemFields(data.summary.quantity, data.summary.total_amount_cents / 100));
       }).catch(function (error) {
         if (revision === quoteRevision && destinationCep === cepInput.value) fail(error.message || 'Frete indisponível.');
       }).finally(function () { if (revision === quoteRevision) loading.hidden = true; });
@@ -233,6 +283,13 @@
       checkoutWindow.document.body.textContent = 'Aguarde: estamos preparando o pagamento seguro.';
     } catch (e) { /* the waiting text is cosmetic */ }
     buy.disabled = true; errorBox.hidden = true;
+    commerce('begin_checkout', itemFields(quotedQuantity, currentSummary.total_amount_cents / 100));
+    var checkoutErrorSent = false;
+    function trackCheckoutError(code) {
+      if (checkoutErrorSent) return;
+      checkoutErrorSent = true;
+      commerce('direct_checkout_error', {error_code:code});
+    }
     var body = {destination_cep: destinationCep, quantity: quotedQuantity,
       confirmed_summary: currentSummary, idempotency_key: commercialAttempt(destinationCep)};
     fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
@@ -263,14 +320,20 @@
           setInventory('TEMPORARILY_UNAVAILABLE'); fail(data.error.message); return;
         }
         if (code === 'ORDER_EXPIRED' || code === 'CHECKOUT_FAILED' || code === 'IDEMPOTENCY_CONFLICT') {
+          trackCheckoutError(code);
           discardAttempt(); invalidateQuote(); closeWith(checkoutWindow, data.error.message); return;
         }
-        if (!result.ok || !data.checkout || !data.checkout.url) throw new Error(data.error && data.error.message);
+        if (!result.ok || !data.checkout || !data.checkout.url) {
+          trackCheckoutError(code || 'INVALID_CHECKOUT_RESPONSE');
+          throw new Error(data.error && data.error.message);
+        }
+        commerce('direct_checkout_created', itemFields(quotedQuantity, currentSummary.total_amount_cents / 100));
         checkoutWindow.location = data.checkout.url;
       })
       .catch(function (error) {
         checkoutWindow.close();
         if (revision !== quoteRevision || destinationCep !== cepInput.value || !currentQuote) return;
+        trackCheckoutError('CHECKOUT_REQUEST_FAILED');
         fail(error.message || 'Checkout indisponível.'); buy.disabled = false;
       });
   });

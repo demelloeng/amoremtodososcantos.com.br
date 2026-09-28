@@ -31,14 +31,15 @@ function element(id) {
     focus() { this.focused = true; }};
 }
 
-function page({local = storage(), session = storage(), cookies = '_ga=GA1.1.1; _ga_NGG2M69HNW=GS1; other=1'} = {}) {
+function page({local = storage(), session = storage(), cookies = '_ga=GA1.1.1; _ga_NGG2M69HNW=GS1; other=1',
+  search = '?utm_source=instagram', referrer = 'https://www.instagram.com/'} = {}) {
   const ids = Object.fromEntries(['privacy-banner', 'privacy-accept', 'privacy-reject', 'privacy-preferences']
     .map(id => [id, element(id)]));
-  const scripts = [], cookieWrites = [], events = [];
+  const scripts = [], cookieWrites = [], events = [], windowListeners = {};
   const links = [];
   const document = {
     readyState: 'complete',
-    referrer: 'https://www.instagram.com/',
+    referrer,
     getElementById: id => ids[id] || null,
     querySelectorAll: selector => (selector === '[data-analytics-event]' ? links : []),
     createElement: tag => ({tagName: tag, async: false, src: ''}),
@@ -48,14 +49,20 @@ function page({local = storage(), session = storage(), cookies = '_ga=GA1.1.1; _
     addEventListener() {}
   };
   const window = {
-    location: {search: '?utm_source=instagram', pathname: '/', hostname: 'amoremtodososcantos.com.br'},
+    location: {search, pathname: '/', hostname: 'amoremtodososcantos.com.br',
+      origin: 'https://amoremtodososcantos.com.br', href: 'https://amoremtodososcantos.com.br/' + search},
     localStorage: local, sessionStorage: session,
-    dispatchEvent: event => events.push(event.type),
-    addEventListener() {},
+    dispatchEvent: event => {
+      events.push(event.type);
+      (windowListeners[event.type] || []).forEach(listener => listener(event));
+    },
+    addEventListener: (type, listener) => {
+      (windowListeners[type] = windowListeners[type] || []).push(listener);
+    },
   };
   window.window = window;
   const context = {window, document, localStorage: local, sessionStorage: session, URLSearchParams, URL,
-    JSON, Date, CustomEvent: function (type) { this.type = type; }, Error};
+    JSON, Date, CustomEvent: function (type, init = {}) { this.type = type; this.detail = init.detail; }, Error};
   context.self = window;
   vm.createContext(context);
   return {ids, scripts, cookieWrites, events, window, context, local, session, links,
@@ -99,6 +106,16 @@ test('privacy policy describes the real processing only', () => {
   assert.doesNotMatch(policy, /googletagmanager\.com\/gtag/);
   assert.match(policy, /<html lang="pt-BR">/);
   assert.match(policy, /href="\/"/);
+  assert.match(policy, /Última atualização: 28 de setembro de 2026/);
+  for (const stage of ['visualização da oferta', 'cálculo de frete concluído', 'início do checkout',
+    'criação do checkout', 'falha técnica do checkout', 'retorno do checkout']) assert.ok(policy.includes(stage), stage);
+  for (const excluded of ['nome', 'CPF', 'e-mail', 'telefone', 'endereço', 'CEP', 'order_id',
+    'access_token', 'tokens', 'credenciais de consulta do pedido']) assert.ok(policy.includes(excluded), excluded);
+  assert.match(policy, /Esses eventos não enviam ao Google Analytics/i);
+  assert.match(policy, /execução da compra/i);
+  assert.doesNotMatch(policy, /medir visitas e cliques nos canais de compra\s*\(Amazon, UICLAP, Clube de Autores\), incluindo origem[^.]*\./);
+  assert.match(html, /medir visitas e o uso dos canais e etapas de compra/);
+  assert.doesNotMatch(html, /medir visitas e cliques nos canais de compra/);
 });
 
 test('policy names the work canonically and shares the home stylesheet version', () => {
@@ -197,6 +214,45 @@ test('preferences can be reviewed and consent revoked', () => {
   assert.ok(!expired.includes('other'));
 });
 
+test('GA4 config sanitizes automatic page_view location and referrer', () => {
+  const p = page({
+    search: '?checkout=production-success&order_id=ord-1&token=secret&email=x@example.test&utm_source=instagram&utm_campaign=campanha',
+    referrer: 'https://exemplo.com/pagina?token=x&email=y#segredo'
+  });
+  p.window.location.href = p.window.location.origin + p.window.location.pathname + p.window.location.search + '#hash-secreto';
+  p.run(consentSource); p.ids['privacy-accept'].fire('click');
+  const configCall = p.window.dataLayer.map(args => Array.from(args)).find(args => args[0] === 'config');
+  assert.equal(configCall[2].page_location,
+    'https://amoremtodososcantos.com.br/?utm_source=instagram&utm_campaign=campanha');
+  assert.equal(configCall[2].page_referrer, 'https://exemplo.com/pagina');
+  assert.doesNotMatch(JSON.stringify(configCall), /checkout|order_id|ord-1|token|secret|email|example\.test|CEP|arbitrario/);
+});
+
+test('grant then deny then grant re-enables GA4 without reinjecting or reinitializing it', () => {
+  const p = page();
+  p.run(consentSource); p.run(analyticsSource);
+  const commerce = () => p.window.dispatchEvent(new p.context.CustomEvent('fissura:commerce', {detail: {
+    event: 'view_item', currency: 'BRL', value: 49.99, quantity: 1,
+    item_id: 'fissura_fisico_direto', item_name: 'Amor em todos os cantos — Fissura', sales_channel: 'direct'
+  }}));
+  p.ids['privacy-accept'].fire('click');
+  assert.equal(p.window[`ga-disable-${MEASUREMENT_ID}`], false);
+  commerce();
+  p.ids['privacy-preferences'].fire('click');
+  p.ids['privacy-reject'].fire('click');
+  assert.equal(p.window[`ga-disable-${MEASUREMENT_ID}`], true);
+  commerce();
+  p.ids['privacy-preferences'].fire('click');
+  p.ids['privacy-accept'].fire('click');
+  assert.equal(p.window[`ga-disable-${MEASUREMENT_ID}`], false);
+  commerce();
+  assert.equal(loadedGtag(p).length, 1);
+  assert.equal(p.window.dataLayer.filter(args => Array.from(args)[0] === 'js').length, 1);
+  assert.equal(p.window.dataLayer.filter(args => Array.from(args)[0] === 'config').length, 1);
+  assert.equal(p.window.dataLayer.filter(args => Array.from(args)[0] === 'event' && Array.from(args)[1] === 'view_item').length, 2);
+  assert.equal(p.events.filter(type => type === 'fissura:analytics-consent').length, 2);
+});
+
 // --- analytics.js respects the preference ----------------------------------
 
 test('attribution and purchase events never run without consent', () => {
@@ -225,6 +281,78 @@ test('with consent, attribution is captured and clicks are tracked', () => {
   assert.equal(stored.utm_source, 'instagram');
   const event = p.window.dataLayer.map(args => Array.from(args)).find(args => args[0] === 'event');
   assert.equal(event[1], 'click_amazon');
+});
+
+test('commerce events are ignored without consent and forwarded with consent and attribution', () => {
+  const detail = {event: 'add_shipping_info', currency: 'BRL', value: 62.45, quantity: 1,
+    item_id: 'fissura_fisico_direto', item_name: 'Amor em todos os cantos — Fissura', sales_channel: 'direct'};
+  const denied = page();
+  denied.run(consentSource); denied.run(analyticsSource);
+  denied.window.dispatchEvent(new denied.context.CustomEvent('fissura:commerce', {detail}));
+  assert.equal(denied.window.dataLayer, undefined);
+
+  const granted = page({local: storage({[PREFS_KEY]: JSON.stringify({version: 1, analytics: 'granted'})})});
+  granted.run(consentSource); granted.run(analyticsSource);
+  granted.window.dispatchEvent(new granted.context.CustomEvent('fissura:commerce', {detail}));
+  const event = granted.window.dataLayer.map(args => Array.from(args)).find(args => args[0] === 'event' && args[1] === 'add_shipping_info');
+  assert.ok(event);
+  assert.equal(event[2].currency, 'BRL');
+  assert.equal(event[2].value, 62.45);
+  assert.equal(event[2].items[0].item_id, 'fissura_fisico_direto');
+  assert.equal(event[2].items[0].sales_channel, 'direct');
+  assert.equal(event[2].utm_source, 'instagram');
+});
+
+test('commerce analytics allowlist drops PII, tokens and purchase events', () => {
+  const p = page({local: storage({[PREFS_KEY]: JSON.stringify({version: 1, analytics: 'granted'})})});
+  p.run(consentSource); p.run(analyticsSource);
+  p.window.dispatchEvent(new p.context.CustomEvent('fissura:commerce', {detail: {
+    event: 'direct_checkout_error', error_code: 'CHECKOUT_FAILED', cep: '80000-000', name: 'Pessoa',
+    email: 'x@example.test', phone: '9999', address: 'Rua X', access_token: 'secret', order_token: 'secret'
+  }}));
+  p.window.dispatchEvent(new p.context.CustomEvent('fissura:commerce', {detail: {event: 'purchase', value: 62.45}}));
+  const events = p.window.dataLayer.map(args => Array.from(args)).filter(args => args[0] === 'event');
+  assert.equal(events.length, 1);
+  assert.equal(events[0][1], 'direct_checkout_error');
+  assert.deepEqual(Object.keys(events[0][2]).sort(), ['error_code', 'landing_page', 'referrer', 'traffic_origin',
+    'utm_campaign', 'utm_content', 'utm_medium', 'utm_source', 'utm_term'].sort());
+  assert.equal(JSON.stringify(events).includes('80000'), false);
+  assert.equal(JSON.stringify(events).includes('secret'), false);
+});
+
+test('analytics attribution strips sensitive query parameters from landing page and referrer', () => {
+  const p = page({
+    local: storage({[PREFS_KEY]: JSON.stringify({version: 1, analytics: 'granted'})}),
+    search: '?utm_source=instagram&order_id=ord-secret&access_token=token-secret',
+    referrer: 'https://checkout.example/return?email=x@example.test&token=secret'
+  });
+  const link = element('amazon-link');
+  link.attributes = {'data-analytics-event': 'click_amazon', 'data-retailer': 'amazon', href: 'https://www.amazon.com.br/x'};
+  p.links.push(link);
+  p.run(consentSource); p.run(analyticsSource);
+  link.fire('click');
+  const event = p.window.dataLayer.map(args => Array.from(args)).find(args => args[0] === 'event');
+  assert.equal(event[2].landing_page, '/?utm_source=instagram');
+  assert.equal(event[2].referrer, 'https://checkout.example/return');
+  assert.doesNotMatch(JSON.stringify(event), /ord-secret|token-secret|x@example\.test/);
+});
+
+test('analytics sanitizes attribution previously stored with sensitive query parameters', () => {
+  const stored = {utm_source: 'instagram', utm_medium: null, utm_campaign: null, utm_content: null, utm_term: null,
+    landing_page: '/?utm_source=instagram&order_id=ord-secret',
+    referrer: 'https://checkout.example/return?access_token=token-secret', traffic_origin: 'instagram'};
+  const p = page({
+    local: storage({[PREFS_KEY]: JSON.stringify({version: 1, analytics: 'granted'})}),
+    session: storage({fissura_attribution_session: JSON.stringify(stored)})
+  });
+  const link = element('amazon-link');
+  link.attributes = {'data-analytics-event': 'click_amazon', 'data-retailer': 'amazon', href: 'https://www.amazon.com.br/x'};
+  p.links.push(link);
+  p.run(consentSource); p.run(analyticsSource); link.fire('click');
+  const event = p.window.dataLayer.map(args => Array.from(args)).find(args => args[0] === 'event');
+  assert.equal(event[2].landing_page, '/?utm_source=instagram');
+  assert.equal(event[2].referrer, 'https://checkout.example/return');
+  assert.doesNotMatch(JSON.stringify(event), /ord-secret|token-secret/);
 });
 
 test('site works with analytics denied: direct sales script is independent', () => {

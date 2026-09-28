@@ -96,7 +96,54 @@
     <div class="comprar__inner">
       <h2 class="comprar__title" id="comprar-title">Onde comprar</h2>
 
-      <div class="cards">
+      <!-- Direct purchase is the primary offer, before retailer alternatives in visual and DOM order. -->
+      <div class="card-group card-group--direct">
+        <article id="direct-card" class="card card--direct" data-price-channel="direct" hidden
+                 data-retailer="direct" data-product-format="impresso_autografado"
+                 aria-label="Compra direta — carregando preço">
+          <div class="direct__info">
+            <div class="card__info">
+              <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
+              <span class="card__text"><span class="card__channel">Compra direta</span>
+                <span class="card__format">Autografado + marca-páginas</span></span>
+            </div>
+            <div id="direct-active-offer" hidden>
+              <p class="direct__headline">AGORA DÁ PRA COMPRAR DIRETO COMIGO.</p>
+              <p class="direct__copy">O livro já está aqui — impresso, esperando autógrafo e endereço.</p>
+              <p class="direct__copy">Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.</p>
+              <div class="card__deal"><span class="card__price">R$ 49,99</span><span class="direct__freight"> + frete</span></div>
+              <p class="direct__benefit">Autografado + marca-páginas</p>
+            </div>
+            <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
+            <p id="direct-payment-methods" class="direct__payment" hidden></p>
+            <p id="direct-payment-installments" class="direct__payment" hidden></p>
+          </div>
+          <div id="direct-flow" hidden>
+            <p id="direct-availability" class="direct__availability" role="status" hidden></p>
+            <div class="direct__quantity" role="group" aria-labelledby="direct-quantity-label">
+              <span id="direct-quantity-label" class="direct__label">Quantidade</span>
+              <div class="direct__stepper"><button id="direct-quantity-minus" type="button" aria-label="Diminuir quantidade">−</button><output id="direct-quantity" aria-live="polite">1</output><button id="direct-quantity-plus" type="button" aria-label="Aumentar quantidade">+</button></div>
+            </div>
+            <p id="direct-quantity-contact" class="direct__hint" hidden>Para mais de 3 exemplares, escreva para <a href="mailto:marcos@demelloeng.com.br">marcos@demelloeng.com.br</a>.</p>
+            <label class="direct__label" for="direct-cep">CEP de entrega</label>
+            <div class="direct__cep"><input id="direct-cep" inputmode="numeric" maxlength="9" placeholder="00000-000"><button id="direct-quote" type="button">CALCULAR FRETE</button></div>
+            <p id="direct-loading" hidden>Calculando frete…</p><p id="direct-error" class="direct__error" role="alert" hidden></p>
+            <dl id="direct-summary" class="direct__summary" hidden>
+              <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Quantidade</dt><dd id="direct-quantity-summary">—</dd></div>
+              <div><dt>Preço unitário</dt><dd id="direct-unit">—</dd></div><div><dt>Subtotal</dt><dd id="direct-subtotal">—</dd></div>
+              <div><dt>Frete cobrado</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
+              <div><dt>Prazo</dt><dd id="direct-days">—</dd></div><div class="direct__total"><dt>Total</dt><dd id="direct-total">—</dd></div>
+            </dl>
+            <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
+            <p id="direct-order-status" class="direct__order-status" role="status" hidden></p>
+          </div>
+        </article>
+        <a class="review-link review-link--direct" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Comprou direto? Avalie no Skoob</span></a>
+      </div>
+
+      <div class="retailer-alternatives">
+        <p class="retailer-alternatives__title">Prefere comprar por outra plataforma?</p>
+        <div class="cards">
 
         <div class="card-group">
         <a class="card"
@@ -177,45 +224,7 @@
           <a class="review-link" href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/logo-clube-autores.png" width="24" height="24" alt="" aria-hidden="true"><span>Já leu? Avalie no Clube de Autores</span></a>
         </div>
 
-      </div>
-
-      <!-- Direct purchase is a checkout flow, not a fourth retailer: its own block, with Skoob as its review channel. -->
-      <div class="card-group card-group--direct">
-        <article id="direct-card" class="card card--direct" data-price-channel="direct" hidden
-                 data-retailer="direct" data-product-format="impresso_autografado"
-                 aria-label="Compra direta — carregando preço">
-          <div class="direct__info">
-            <div class="card__info">
-              <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
-              <span class="card__text"><span class="card__channel">Compra direta</span>
-                <span class="card__format">Autografado + marca-páginas</span></span>
-            </div>
-            <div class="card__deal"><span class="card__price">Carregando…</span></div>
-            <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
-            <p id="direct-payment-methods" class="direct__payment"></p>
-            <p id="direct-payment-installments" class="direct__payment" hidden></p>
-            <a class="review-link review-link--direct" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Comprou direto? Avalie no Skoob</span></a>
-          </div>
-          <div id="direct-flow" hidden>
-            <p id="direct-availability" class="direct__availability" role="status" hidden></p>
-            <div class="direct__quantity" role="group" aria-labelledby="direct-quantity-label">
-              <span id="direct-quantity-label" class="direct__label">Quantidade</span>
-              <div class="direct__stepper"><button id="direct-quantity-minus" type="button" aria-label="Diminuir quantidade">−</button><output id="direct-quantity" aria-live="polite">1</output><button id="direct-quantity-plus" type="button" aria-label="Aumentar quantidade">+</button></div>
-            </div>
-            <p id="direct-quantity-contact" class="direct__hint" hidden>Para mais de 3 exemplares, escreva para <a href="mailto:marcos@demelloeng.com.br">marcos@demelloeng.com.br</a>.</p>
-            <label class="direct__label" for="direct-cep">CEP de entrega</label>
-            <div class="direct__cep"><input id="direct-cep" inputmode="numeric" maxlength="9" placeholder="00000-000"><button id="direct-quote" type="button">Calcular frete</button></div>
-            <p id="direct-loading" hidden>Calculando frete…</p><p id="direct-error" class="direct__error" role="alert" hidden></p>
-            <dl id="direct-summary" class="direct__summary" hidden>
-              <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Quantidade</dt><dd id="direct-quantity-summary">—</dd></div>
-              <div><dt>Preço unitário</dt><dd id="direct-unit">—</dd></div><div><dt>Subtotal</dt><dd id="direct-subtotal">—</dd></div>
-              <div><dt>Frete cobrado</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
-              <div><dt>Prazo</dt><dd id="direct-days">—</dd></div><div class="direct__total"><dt>Total</dt><dd id="direct-total">—</dd></div>
-            </dl>
-            <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
-            <p id="direct-order-status" class="direct__order-status" role="status" hidden></p>
-          </div>
-        </article>
+        </div>
       </div>
 
     </div>
@@ -328,7 +337,7 @@
 </footer>
 
 <section id="privacy-banner" class="privacy-banner" role="region" aria-label="Preferências de privacidade" hidden>
-  <p class="privacy-banner__text">Usamos o Google Analytics apenas se você permitir, para medir visitas e cliques nos canais de compra. A compra direta funciona sem essa medição. <a href="privacidade.html">Política de privacidade</a>.</p>
+  <p class="privacy-banner__text">Usamos o Google Analytics apenas se você permitir, para medir visitas e o uso dos canais e etapas de compra. A compra direta funciona sem essa medição. <a href="privacidade.html">Política de privacidade</a>.</p>
   <div class="privacy-banner__actions"><button id="privacy-accept" type="button">Permitir medição</button><button id="privacy-reject" type="button">Recusar</button></div>
 </section>
 
