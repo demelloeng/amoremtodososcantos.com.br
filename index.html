@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=flim-hero-01">
+<link rel="stylesheet" href="styles.css?v=site-refino-01">
 
 </head>
 <body>
@@ -73,7 +73,7 @@
   </div>
 
   <div class="hero__images">
-    <img class="hero__cover" src="assets/capa-fissura.png" alt="Capa do livro Amor em todos os cantos">
+    <img class="hero__cover" src="assets/capa-fissura.png" alt="Capa do livro Amor em todos os cantos — Fissura">
   </div>
 </header>
 
@@ -122,7 +122,7 @@
           </div>
         <span class="card__cta">COMPRAR NA AMAZON</span>
         </a>
-          <a class="review-link" href="https://www.amazon.com.br/dp/B0HB7PR45H" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/logo-amazon.png" width="24" height="24" alt="" aria-hidden="true"><span>Já leu? Avalie na Amazon</span></a>
+          <a class="review-link" href="https://www.amazon.com.br/dp/B0HB7PR45H" target="_blank" rel="noopener noreferrer"><img class="review-icon review-icon--wide" src="assets/logo-amazon.png" width="46" height="14" alt="" aria-hidden="true"><span>Já leu? Avalie na Amazon</span></a>
         </div>
 
         <div class="card-group">
@@ -177,19 +177,25 @@
           <a class="review-link" href="https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/logo-clube-autores.png" width="24" height="24" alt="" aria-hidden="true"><span>Já leu? Avalie no Clube de Autores</span></a>
         </div>
 
-        <div class="card-group card-group--direct">
+      </div>
+
+      <!-- Direct purchase is a checkout flow, not a fourth retailer: its own block, with Skoob as its review channel. -->
+      <div class="card-group card-group--direct">
         <article id="direct-card" class="card card--direct" data-price-channel="direct" hidden
                  data-retailer="direct" data-product-format="impresso_autografado"
                  aria-label="Compra direta — carregando preço">
-          <div class="card__info">
-            <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
-            <span class="card__text"><span class="card__channel">Compra direta</span>
-              <span class="card__format">Autografado + marca-páginas</span></span>
+          <div class="direct__info">
+            <div class="card__info">
+              <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
+              <span class="card__text"><span class="card__channel">Compra direta</span>
+                <span class="card__format">Autografado + marca-páginas</span></span>
+            </div>
+            <div class="card__deal"><span class="card__price">Carregando…</span></div>
+            <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
+            <p id="direct-payment-methods" class="direct__payment"></p>
+            <p id="direct-payment-installments" class="direct__payment" hidden></p>
+            <a class="review-link review-link--direct" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Comprou direto? Avalie no Skoob</span></a>
           </div>
-          <div class="card__deal"><span class="card__price">Carregando…</span></div>
-          <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
-          <p id="direct-payment-methods" class="direct__payment"></p>
-          <p id="direct-payment-installments" class="direct__payment" hidden></p>
           <div id="direct-flow" hidden>
             <p id="direct-availability" class="direct__availability" role="status" hidden></p>
             <div class="direct__quantity" role="group" aria-labelledby="direct-quantity-label">
@@ -209,11 +215,7 @@
             <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
             <p id="direct-order-status" class="direct__order-status" role="status" hidden></p>
           </div>
-
         </article>
-          <a class="review-link" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Já leu? Avalie no Skoob</span></a>
-        </div>
-
       </div>
 
     </div>
@@ -222,7 +224,7 @@
   <section class="section purchase-faq" aria-labelledby="duvidas-title">
     <h2 id="duvidas-title">Dúvidas de compra</h2>
     <div class="accordion-grid">
-      <details><summary>Formatos e canais de compra</summary><p>Fissura está disponível em e-book Kindle e em versão impressa. Escolha acima o canal que preferir.</p></details>
+      <details><summary>Formatos e canais de compra</summary><p>Amor em todos os cantos — Fissura está disponível em e-book Kindle e em versão impressa. Escolha acima o canal que preferir.</p></details>
       <details><summary>Pagamento e parcelamento</summary><p>Cada loja tem suas próprias condições. Na compra direta, você vê as opções de pagamento antes de concluir o pedido.</p></details>
       <details><summary>Frete, prazo e entrega</summary><p>Na compra direta, informe seu CEP para ver frete, prazo e valor total antes de comprar.</p></details>
       <details><summary>Autógrafo e marca-páginas</summary><p>Na compra direta, o livro vai autografado e acompanha marca-páginas.</p></details>
@@ -243,7 +245,7 @@
 
   <section class="section elenco" id="elenco" aria-labelledby="elenco-title" data-carousel>
     <div class="section-heading"><h2 id="elenco-title">CONHEÇA O ELENCO</h2><div class="carousel-controls cast-controls" hidden><button type="button" data-step="-1" aria-controls="cast-track" aria-label="Personagem anterior">‹</button><button type="button" data-step="1" aria-controls="cast-track" aria-label="Próximo personagem">›</button></div></div>
-    <ul class="cast-track" id="cast-track" data-track tabindex="0" aria-label="Elenco de Fissura">
+    <ul class="cast-track" id="cast-track" data-track tabindex="0" aria-label="Elenco de Amor em todos os cantos — Fissura">
       <li><h3>DEMI</h3><p>uma engenheira desequilibrada</p></li>
       <li><h3>DÉDS</h3><p>um hétero top polido</p></li>
       <li><h3>CÉCIS</h3><p>uma maluca tão discreta quanto um destaque de escola de samba</p></li>
@@ -255,25 +257,22 @@
     <p class="sr-only" data-carousel-status aria-live="polite"></p>
   </section>
 
-  <section class="vozes" aria-labelledby="vozes-title" data-carousel>
+  <section class="vozes" aria-labelledby="vozes-title">
     <div class="section">
-      <div class="section-heading"><h2 id="vozes-title">O QUE ESTÃO DIZENDO</h2><div class="carousel-controls" hidden><button type="button" data-step="-1" aria-controls="voices-track" aria-label="Depoimento anterior">‹</button><button type="button" data-step="1" aria-controls="voices-track" aria-label="Próximo depoimento">›</button></div></div>
-      <div class="voices-track" id="voices-track" data-track tabindex="0" aria-label="Depoimentos de leitores">
+      <div class="section-heading"><h2 id="vozes-title">O QUE ESTÃO DIZENDO</h2></div>
+      <div class="voices" data-voices role="region" aria-roledescription="carrossel" aria-label="Depoimentos de leitores" tabindex="0">
+      <div class="voices-viewport">
+      <div class="voices-track" id="voices-track">
         <article class="voice" id="voz-aline"><img src="assets/leitor-aline.jpg" alt="Aline" loading="lazy"><div><h3>Aline</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Você criou um lugar onde eu entrei e me senti em casa.”</p><p class="voice__after">“Quando eu terminei, senti saudade deles.”</p></blockquote></div></article>
         <article class="voice" id="voz-ana"><img src="assets/leitor-ana.jpg" alt="Ana" loading="lazy"><div><h3>Ana</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Fissura é um romance sobre encontros, desejos e afetos. (...) Uma leitura que, mais do que me conquistar, me fez perceber como cada fase da vida também muda a forma como lemos uma história.”</p></blockquote></div></article>
         <article class="voice" id="voz-saulo"><img src="assets/leitor-saulo.jpg" alt="Saulo" loading="lazy"><div><h3>Saulo</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Uma leitura envolvente, divertida e surpreendentemente humana. (...) Demi é uma personagem fácil de acompanhar e impossível de não torcer por ela. O humor deixa tudo mais leve, enquanto os momentos de reflexão dão profundidade à narrativa.”</p></blockquote></div></article>
         <article class="voice" id="voz-karina"><img src="assets/leitor-karina.jpg" alt="Karina" loading="lazy"><div><h3>Karina</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“E quando a última página chegou, ficou aquela sensação rara de ter vivido alguma coisa junto com a personagem. Algumas histórias a gente lê. Outras a gente sente, e essa eu senti.”</p></blockquote></div></article>
         <article class="voice" id="voz-rafael"><span class="voice__initial" aria-hidden="true">R</span><div><h3>Rafael</h3><p class="voice__source"><img src="assets/logo-clube-autores.png" alt="" aria-hidden="true">Clube de Autores</p><blockquote><p>“Obra literária incrível! Impossível não se prender a trama!!!”</p></blockquote></div></article>
-        <article class="voice" id="voz-fabio"><span class="voice__initial" aria-hidden="true">F</span><div><h3>Fábio</h3><p class="voice__source"><img src="assets/logo-amazon.png" alt="" aria-hidden="true">Amazon</p><blockquote><p><strong>Ótimo livro!</strong></p><p>“Aguardando o livro físico também! 😅”</p></blockquote></div></article>
+        <article class="voice" id="voz-fabio"><span class="voice__initial" aria-hidden="true">F</span><div><h3>Fábio</h3><p class="voice__source"><img class="voice__brand--wide" src="assets/logo-amazon.png" alt="" aria-hidden="true">Amazon</p><blockquote><p><strong>Ótimo livro!</strong></p><p>“Aguardando o livro físico também! 😅”</p></blockquote></div></article>
       </div>
-      <p class="sr-only" data-carousel-status aria-live="polite"></p>
-      <div class="voices-nav" aria-label="Escolher depoimento" hidden>
-        <button type="button" data-slide="0" aria-controls="voices-track"><img src="assets/leitor-aline.jpg" alt="" loading="lazy"><span>Aline</span></button>
-        <button type="button" data-slide="1" aria-controls="voices-track"><img src="assets/leitor-ana.jpg" alt="" loading="lazy"><span>Ana</span></button>
-        <button type="button" data-slide="2" aria-controls="voices-track"><img src="assets/leitor-saulo.jpg" alt="" loading="lazy"><span>Saulo</span></button>
-        <button type="button" data-slide="3" aria-controls="voices-track"><img src="assets/leitor-karina.jpg" alt="" loading="lazy"><span>Karina</span></button>
-        <button type="button" data-slide="4" aria-controls="voices-track"><span class="voices-nav__initial" aria-hidden="true">R</span><span>Rafael</span></button>
-        <button type="button" data-slide="5" aria-controls="voices-track"><span class="voices-nav__initial" aria-hidden="true">F</span><span>Fábio</span></button>
+      </div>
+      <div class="voices-dots" role="group" aria-label="Escolher depoimentos" hidden></div>
+      <p class="sr-only" data-voices-status aria-live="polite"></p>
       </div>
       <div class="center-action"><a class="button" href="#comprar">COMPRE AQUI</a></div>
     </div>
@@ -282,26 +281,25 @@
   <section class="section autor" aria-labelledby="autor-title">
     <img class="autor__foto" src="assets/marcos-de-mello-silva.jpeg" alt="Marcos de Mello Silva" loading="lazy">
     <div class="autor__texto"><p class="eyebrow">SOBRE O AUTOR</p><h2 id="autor-title">Marcos de Mello Silva</h2>
-      <p class="autor__linha">Engenheiro civil · autor paranaense · escritor</p>
-      <p class="autor__bio">Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem. Em Fissura, transforma deslocamento, humor, memória afetiva e vida adulta em romance.</p>
+      <p class="autor__linha">Engenheiro civil · autor de Amor em todos os cantos</p>
+      <p class="autor__bio">Paranaense, Marcos de Mello Silva escreve a partir do encontro entre cidades, deslocamento, trabalho, humor e memória afetiva. Em Amor em todos os cantos — Fissura, leva para a ficção um Brasil vivido entre relações, viagens e vida adulta.</p>
     </div>
-    <div class="autor__origem"><blockquote>“Amor em todos os cantos nasceu de uma ferida.”</blockquote><span class="pending-label">LER O MANIFESTO DE AMOR<br><strong>EM BREVE</strong></span></div>
+    <div class="autor__origem"><blockquote>“Amor em todos os cantos nasceu de uma ferida.”</blockquote></div>
   </section>
 
-  <section class="section vocabulary" aria-labelledby="ideias-title"><h2 id="ideias-title" class="ruled-title">IDEIAS QUE ATRAVESSAM FISSURA</h2><p>BIM Literário · Geografia dramática · Teocracia solar · Arquitetura musical · Engenharia do afeto · Incabência</p></section>
-
-  <section class="section editorial-faq" aria-labelledby="perguntas-title"><h2 id="perguntas-title" class="ruled-title">PERGUNTAS SOBRE FISSURA</h2>
+  <section class="section editorial-faq" aria-labelledby="perguntas-title"><h2 id="perguntas-title" class="ruled-title">PERGUNTAS SOBRE AMOR EM TODOS OS CANTOS</h2>
     <div class="accordion-grid">
-      <details><summary>É uma história de amor?</summary><p>Sim. Só não de um amor só. Fissura atravessa amor romântico, amizade, família, Brasil, memória e aquilo que permanece mesmo quando tudo sai do eixo. No fundo, é também a história de Demi descobrindo que o amor mais decisivo não está espalhado em todos os cantos — precisa existir dentro.</p></details>
+      <details><summary>É uma história de amor?</summary><p>Sim. Só não de um amor só. O livro atravessa amor romântico, amizade, família, Brasil, memória e aquilo que permanece mesmo quando tudo sai do eixo. No fundo, é também a história de Demi descobrindo que o amor mais decisivo não está espalhado em todos os cantos — precisa existir dentro.</p></details>
       <details><summary>De onde saíram os personagens?</summary><p>De um laboratório de memória, referências e vida real. Eles nasceram da fusão de pessoas que conheci, foram testados, tensionados e ressignificados até deixarem de ser referência e ganharem identidade própria dentro da obra.</p></details>
       <details><summary>Quanto disso veio da vida real?</summary><p>Bastante da matéria-prima. Mas vida real aqui não virou transcrição: fatos, experiências e referências pessoais passaram por composição, mistura e ficção até formarem um universo próprio. O que veio da vida serviu de lastro; o livro precisou aprender a existir sozinho.</p></details>
       <details><summary>Por que um homem escreveu uma protagonista mulher?</summary><p>Porque Demi apareceu mulher. Não foi uma estratégia de representação nem uma decisão de mercado. Minha formação afetiva sempre foi atravessada por mulheres, então essa personagem surgiu de forma muito mais natural do que calculada. E, sendo bem sincero: por que eu ia escrever sobre macho, gente? Que graça tem?</p></details>
-      <details><summary>Por que Fissura?</summary><p>Porque a história nasce de uma ferida. E porque, depois de certas perdas, amar também pode passar a carregar medo, urgência e excesso. A fissura é a marca deixada por isso — mas também é a abertura por onde a história começa a se transformar.</p></details>
+      <details><summary>Por que “Amor em todos os cantos”?</summary><p>Porque os “cantos” da história são geográficos e afetivos. Demi atravessa cidades, relações, perdas e encontros pelo Brasil, mas o livro vai deslocando a ideia de lugar: há cantos que existem no mapa e outros que a gente precisa encontrar em si. O título nasce dessa dupla geografia — os lugares por onde ela passa e os lugares internos que aprende a reconhecer.</p></details>
+      <details><summary>Por que Fissura?</summary><p>Fissura é o subtítulo porque a história nasce de uma ferida. E porque, depois de certas perdas, amar também pode passar a carregar medo, urgência e excesso. A fissura é a marca deixada por isso — mas também é a abertura por onde a história começa a se transformar.</p></details>
       <details><summary>É um livro só para mulheres?</summary><p>Não. Demi é uma mulher e a obra olha de perto experiências femininas — inclusive certas rotinas de trabalho impostas a mulheres solteiras, sem filhos, em posições de liderança. Mas o livro fala também de amizade, desejo, perda, memória, Brasil e da forma como a gente aprende a amar depois das rupturas. Você não precisa se parecer com Demi para reconhecer alguma coisa sua nela.</p></details>
     </div>
   </section>
 
-  <section class="closing" aria-label="Comprar Fissura"><div class="section"><p>AMOR <span>em</span> TODOS <span>os</span> CANTOS</p><a class="button" href="#comprar">COMPRE AQUI</a></div></section>
+  <section class="closing" aria-label="Comprar Amor em todos os cantos — Fissura"><div class="section"><p>AMOR <span>em</span> TODOS <span>os</span> CANTOS</p><a class="button" href="#comprar">COMPRE AQUI</a></div></section>
 
   <section class="section continue" aria-labelledby="continue-title"><div><h2 id="continue-title" class="ruled-title">CONTINUE POR AQUI</h2><h3>Marcos de Mello Silva</h3>
     <div class="social-links">
@@ -315,6 +313,12 @@
   </section>
 
   <section class="universe" aria-labelledby="universo-title"><div class="section"><h2 id="universo-title" class="ruled-title">O UNIVERSO CONTINUA</h2><div class="universe__grid"><div><h3>Crônicas de amor: os cantos</h3><p>EM BREVE</p></div><div><h3>Amor em Todos os Cantos — Ruptura</h3><p>VEM AÍ</p></div></div></div></section>
+
+  <!-- Semantic block: visible and indexable, placed after the commercial journey. -->
+  <section class="section vocabulary" aria-labelledby="ideias-title"><h2 id="ideias-title" class="ruled-title">IDEIAS E CONCEITOS DA OBRA</h2>
+    <p class="vocabulary__intro">Em Amor em todos os cantos — Fissura, aparecem ideias como:</p>
+    <p class="vocabulary__terms">BIM Literário · Geografia dramática · Teocracia solar · Arquitetura musical · Engenharia do afeto · Incabência</p>
+  </section>
 
 </main>
 
@@ -334,7 +338,6 @@
     var track = section.querySelector('[data-track]');
     var items = Array.from(track.children);
     var controls = section.querySelector('.carousel-controls');
-    var navigation = section.querySelector('.voices-nav');
     var status = section.querySelector('[data-carousel-status]');
     var selected = 0;
     function offset(index) { return items[index].getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft; }
@@ -352,17 +355,6 @@
       // aria-disabled retains keyboard focus at either end of the carousel.
       controls.querySelector('[data-step="-1"]').setAttribute('aria-disabled', track.scrollLeft < 2);
       controls.querySelector('[data-step="1"]').setAttribute('aria-disabled', track.scrollLeft >= track.scrollWidth - track.clientWidth - 2);
-      if (navigation) {
-        var bounds = track.getBoundingClientRect();
-        var visibleHeights = items.filter(function (item) {
-          var rect = item.getBoundingClientRect();
-          return Math.min(rect.right, bounds.right) - Math.max(rect.left, bounds.left) > rect.width / 2;
-        }).map(function (item) { return item.getBoundingClientRect().height; });
-        if (visibleHeights.length) track.style.height = Math.ceil(Math.max.apply(null, visibleHeights) + 8) + 'px';
-      }
-      if (navigation) navigation.querySelectorAll('[data-slide]').forEach(function (button) {
-        button.setAttribute('aria-pressed', Number(button.dataset.slide) === selected);
-      });
       status.textContent = items[selected].querySelector('h3').textContent + ' · ' + (selected + 1) + ' de ' + items.length;
     }
     controls.querySelectorAll('[data-step]').forEach(function (button) {
@@ -370,12 +362,6 @@
         if (button.getAttribute('aria-disabled') !== 'true') show(nearest() + Number(button.dataset.step));
       });
     });
-    if (navigation) {
-      navigation.hidden = false;
-      navigation.querySelectorAll('[data-slide]').forEach(function (button) {
-        button.addEventListener('click', function () { show(Number(button.dataset.slide)); });
-      });
-    }
     track.addEventListener('keydown', function (event) {
       if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); show(nearest() + (event.key === 'ArrowRight' ? 1 : -1)); }
       if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); show(event.key === 'Home' ? 0 : items.length - 1); }
@@ -392,6 +378,80 @@
     if (document.fonts) document.fonts.ready.then(update);
     update();
   });
+}());
+(function () {
+  // Testimonials: one page at a time (2 per page from 768px), dots as the only manual control.
+  var root = document.querySelector('[data-voices]');
+  if (!root) return;
+  var track = root.querySelector('.voices-track');
+  var items = Array.from(track.children);
+  var dots = root.querySelector('.voices-dots');
+  var status = root.querySelector('[data-voices-status]');
+  var wide = window.matchMedia('(min-width: 768px)');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var INTERVAL = 7000;
+  var page = 0, timer = null, hovered = false, focused = false;
+  function perPage() { return wide.matches ? 2 : 1; }
+  function pageCount() { return Math.ceil(items.length / perPage()); }
+  function names(index) {
+    return items.slice(index * perPage(), (index + 1) * perPage()).map(function (item) { return item.querySelector('h3').textContent; }).join(' e ');
+  }
+  function buildDots() {
+    dots.textContent = '';
+    for (var index = 0; index < pageCount(); index++) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'voices-dot';
+      dot.dataset.page = index;
+      dot.setAttribute('aria-label', 'Mostrar depoimento de ' + names(index));
+      dots.appendChild(dot);
+    }
+    dots.hidden = pageCount() < 2;
+  }
+  function render() {
+    page = Math.min(page, pageCount() - 1);
+    root.style.setProperty('--voices-per-page', perPage());
+    track.style.transform = 'translateX(calc(' + (-page) + ' * (100% + var(--voices-gap))))';
+    items.forEach(function (item, index) { item.setAttribute('aria-hidden', String(Math.floor(index / perPage()) !== page)); });
+    Array.from(dots.children).forEach(function (dot, index) { dot.setAttribute('aria-current', String(index === page)); });
+  }
+  function go(index, announce) {
+    var count = pageCount();
+    page = ((index % count) + count) % count;
+    render();
+    // Only user-driven changes are announced; autoplay stays silent for screen readers.
+    if (announce) status.textContent = names(page) + ' · ' + (page + 1) + ' de ' + count;
+  }
+  function schedule() {
+    clearInterval(timer);
+    timer = null;
+    if (!reduced.matches && !hovered && !focused && !document.hidden && pageCount() > 1) {
+      timer = setInterval(function () { go(page + 1, false); }, INTERVAL);
+    }
+  }
+  dots.addEventListener('click', function (event) {
+    var dot = event.target.closest('.voices-dot');
+    if (dot) go(Number(dot.dataset.page), true);
+  });
+  root.addEventListener('keydown', function (event) {
+    var moves = {ArrowRight: page + 1, ArrowLeft: page - 1, Home: 0, End: pageCount() - 1};
+    if (!(event.key in moves)) return;
+    event.preventDefault();
+    go(moves[event.key], true);
+  });
+  root.addEventListener('mouseenter', function () { hovered = true; schedule(); });
+  root.addEventListener('mouseleave', function () { hovered = false; schedule(); });
+  root.addEventListener('focusin', function () { focused = true; schedule(); });
+  root.addEventListener('focusout', function (event) {
+    if (!root.contains(event.relatedTarget)) { focused = false; schedule(); }
+  });
+  document.addEventListener('visibilitychange', schedule);
+  reduced.addEventListener('change', schedule);
+  wide.addEventListener('change', function () { buildDots(); render(); schedule(); });
+  root.classList.add('is-ready');
+  buildDots();
+  render();
+  schedule();
 }());
 </script>
 <script src="assets/consent.js" defer></script>

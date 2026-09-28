@@ -82,7 +82,7 @@ p { margin: 0; }
 .flim__links a:hover { text-decoration-color: currentColor; }
 .comprar { padding: 30px 0 12px; }
 .comprar__inner { width: min(1280px, calc(100% - 80px)); margin: auto; }
-.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 18px; align-items: stretch; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 18px; align-items: stretch; }
 .card { min-width: 0; padding: 20px 16px 16px; border: 1px solid var(--line); border-radius: 5px; color: var(--branco); background: radial-gradient(ellipse at top left, #263f61, #132947); text-decoration: none; display: flex; flex-direction: column; gap: 16px; align-items: stretch; transition: box-shadow .15s; }
 a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .card__info { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 70px; }
@@ -105,6 +105,16 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .card--direct:has(#direct-coming-soon:not([hidden])) .card__deal { display: none; }
 .direct__coming-soon { margin-top: auto; padding: 14px 10px; background: #e6ebf1; text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .5px; }
 .direct__payment { font-size: 11px; font-weight: 600; text-align: center; line-height: 1.4; }
+/* Direct purchase: own block under the retailers — sales info beside the checkout steps. */
+.card-group--direct { margin-top: 20px; }
+.card--direct { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; gap: 20px 44px; padding: 24px 28px; }
+.card--direct:has(#direct-flow[hidden]) { grid-template-columns: minmax(0, 1fr); }
+.direct__info { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.direct__info .card__info { justify-content: flex-start; min-height: 0; }
+.direct__info .card__deal { margin: 0; text-align: left; }
+.direct__info .direct__payment { text-align: left; font-size: 13px; }
+.card--direct .review-link--direct { justify-content: flex-start; margin-top: 4px; padding: 12px 0 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; text-align: left; }
+#direct-flow { min-width: 0; padding-left: 40px; border-left: 1px solid var(--line); }
 .direct__label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
 .direct__cep { display: flex; flex-wrap: wrap; gap: 8px; }
 .direct__cep input, .direct__cep button, .direct__buy { min-height: 44px; border: 1px solid var(--line); border-radius: 4px; padding: 10px; }
@@ -139,7 +149,10 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .privacy-banner__actions button:first-child { background: var(--azul); color: #fff; }
 .privacy-banner button:focus-visible, .footer__link-button:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px; }
 
-.accordion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 16px; align-items: start; }
+/* Items in a row share one height, so an open answer never leaves a ragged grid. */
+.accordion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 16px; align-items: stretch; }
+.accordion-grid summary { min-height: 64px; }
+.editorial-faq .accordion-grid > details:last-child:nth-child(odd) { grid-column: 1 / -1; }
 details { border: 1px solid var(--line); border-radius: 4px; font-family: var(--serif); font-size: 20px; }
 summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; list-style: none; cursor: pointer; min-height: 48px; padding: 8px 18px; font-weight: 500; }
 summary::-webkit-details-marker { display: none; }
@@ -166,21 +179,27 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .vozes .section-heading { margin-bottom: 20px; }
 .vozes h2 { font-size: 23px; }
 .vozes .section-heading::after { background: #ffffff40; }
-.voices-track { display: flex; align-items: flex-start; overflow-x: auto; gap: 20px; scroll-snap-type: x mandatory; padding: 4px; scrollbar-width: thin; scrollbar-color: #8d9bb4 transparent; }
-.voice { scroll-snap-align: start; flex: 0 0 calc((100% - 20px) / 2); display: flex; align-items: flex-start; gap: 20px; padding: 24px; border: 1px solid #ffffff35; border-radius: 4px; }
+/* Testimonials: static grid without JS; with JS (.is-ready) a clipped track moved one page at a time. */
+.voices { --voices-gap: 20px; }
+.voices-track { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--voices-gap); }
+.voices.is-ready .voices-viewport { overflow: hidden; }
+.voices.is-ready .voices-track { display: flex; align-items: stretch; transition: transform .6s ease; }
+.voices.is-ready .voice { flex: 0 0 calc((100% - (var(--voices-per-page, 2) - 1) * var(--voices-gap)) / var(--voices-per-page, 2)); }
+.voices-dots { display: flex; justify-content: center; gap: 2px; margin-top: 14px; color: var(--dourado); }
+.voices-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 0; background: transparent; color: inherit; }
+.voices-dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: .35; transition: opacity .2s, transform .2s; }
+.voices-dot[aria-current="true"]::before { opacity: 1; transform: scale(1.3); }
+.voice { min-width: 0; display: flex; align-items: flex-start; gap: 20px; padding: 24px; border: 1px solid #ffffff35; border-radius: 4px; }
 .voice > img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-.voice__initial, .voices-nav__initial { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #294665; color: var(--pessego); font-weight: 800; }
+.voice__initial { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #294665; color: var(--pessego); font-weight: 800; }
 .voice__initial { width: 100px; height: 100px; flex: 0 0 100px; font-size: 30px; }
 .voice h3 { margin: 4px 0 6px; color: var(--pessego); font-size: 16px; }
 .voice__source { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; letter-spacing: 1px; color: #d5deeb; }
 .voice__source img { width: 15px; height: 15px; object-fit: contain; border-radius: 2px; }
+/* Horizontal wordmarks (Amazon) keep their proportion on a light chip instead of a 15px square. */
+.voice__source .voice__brand--wide { width: auto; height: 13px; padding: 2px 4px; background: var(--branco); box-sizing: content-box; }
 .voice blockquote { margin: 12px 0 0; font-family: var(--serif); font-size: 23px; line-height: 1.22; }
 .voice__after { margin-top: 16px; font-size: 20px; font-style: italic; }
-.voices-nav { display: flex; gap: 32px; justify-content: center; margin-top: 16px; }
-.voices-nav button { background: transparent; color: var(--pessego); border: 0; border-bottom: 3px solid transparent; padding: 0 0 10px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 13px; min-height: 44px; }
-.voices-nav button[aria-pressed="true"] { border-bottom-color: var(--dourado); }
-.voices-nav img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
-.voices-nav__initial { width: 52px; height: 52px; }
 .center-action { text-align: center; margin-top: 18px; }
 .center-action .button { min-width: 280px; }
 .autor { display: grid; grid-template-columns: 200px minmax(0, 1fr) 340px; gap: 28px; align-items: start; padding-top: 40px; }
@@ -190,10 +209,11 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .autor__bio { font-family: var(--serif); font-size: 22px; line-height: 1.3; margin-top: 14px; }
 .autor__origem { border-left: 1px solid var(--line); padding-left: 30px; min-height: 195px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
 .autor__origem blockquote { font-family: var(--serif); font-size: 28px; line-height: 1.25; font-style: italic; margin: 0; }
-.pending-label { font-size: 12px; font-weight: 700; color: #586780; }
-.vocabulary { padding-top: 20px; padding-bottom: 26px; }
+.vocabulary { padding-top: 24px; padding-bottom: 28px; }
 .vocabulary h2, .editorial-faq h2 { font-size: 20px; letter-spacing: .2px; }
-.vocabulary p { font-family: var(--serif); font-size: 24px; line-height: 1.5; margin-top: 16px; }
+.vocabulary h2 { font-size: 14px; letter-spacing: 1.4px; }
+.vocabulary__intro { margin-top: 12px; font-size: 14px; color: #586780; }
+.vocabulary__terms { margin-top: 4px; font-family: var(--serif); font-size: 20px; line-height: 1.45; }
 .editorial-faq { padding-top: 12px; padding-bottom: 32px; }
 .question-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
 .question-list li { border-bottom: 1px solid var(--line); padding: 8px 12px; font-family: var(--serif); font-size: 21px; line-height: 1.3; }
@@ -230,6 +250,8 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .hero__teaser { font-size: 22px; }
   .cards { gap: 12px; }
   .card { padding-inline: 12px; }
+  .card--direct { padding-inline: 20px; column-gap: 28px; }
+  #direct-flow { padding-left: 28px; }
   .card__channel { font-size: 15px; }
   .card__price { font-size: 24px; }
   .card__logo { width: 32px; height: 32px; }
@@ -295,9 +317,11 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .card--direct .card__channel { font-size: 13px; }
   .card--direct .card__info { gap: 16px; }
   .card--direct .card__format { font-size: 20px; }
+  #direct-flow { padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--line); }
   .direct__coming-soon { margin-top: 4px; }
   .direct__payment { font-size: 12px; }
   .accordion-grid { grid-template-columns: 1fr; gap: 8px; }
+  .accordion-grid summary { min-height: 48px; }
   summary { font-size: 19px; padding: 10px 12px; }
   .fic { display: block; padding-top: 16px; }
   .fic h2 { font-size: 44px; margin-bottom: 12px; }
@@ -318,15 +342,15 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .vozes { background: var(--branco); color: var(--azul); }
   .vozes .section { border-top: 1px solid var(--line); padding-top: 26px; }
   .vozes .section-heading h2 { font-size: 16px; letter-spacing: -.5px; }
-  .voice { flex-basis: 100%; color: var(--branco); background: #193251; border: 0; padding: 22px 18px; gap: 14px; }
+  .voices-track { grid-template-columns: minmax(0, 1fr); }
+  .voices-dots { color: var(--azul); }
+  /* Equal card heights keep the page from shifting on autoplay; content sits centred in the card. */
+  .voice { align-items: center; color: var(--branco); background: #193251; border: 0; padding: 22px 18px; gap: 14px; }
   .voice > img { width: 66px; height: 80px; }
   .voice__initial { width: 66px; height: 80px; flex-basis: 66px; border-radius: 40px; }
   .voice blockquote { font-size: 21px; line-height: 1.25; }
   .voice__source { font-size: 10px; line-height: 1.5; }
   .voice__after { font-size: 19px; }
-  .voices-nav { gap: 20px; }
-  .voices-nav button { flex-direction: column; gap: 6px; font-size: 12px; color: var(--azul); }
-  .voices-nav img { width: 48px; height: 48px; }
   .vozes :focus-visible { outline-color: #b76828; }
   .center-action .button { width: 100%; min-width: 0; }
   .autor { display: flex; flex-direction: column; gap: 20px; border-top: 1px solid var(--line); }
@@ -336,10 +360,10 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .autor__bio { border-left: 1px solid #aeb9cd; padding-left: 14px; font-size: 22px; }
   .autor__origem { border-left: 0; padding-left: 0; min-height: 0; gap: 22px; }
   .autor__origem blockquote { border-left: 1px solid #aeb9cd; padding-left: 14px; font-size: 26px; }
-  .pending-label { font-size: 12px; }
   .vocabulary { border-top: 1px solid var(--line); }
   .vocabulary h2, .editorial-faq h2 { font-size: 18px; line-height: 1.4; }
-  .vocabulary p { font-size: 22px; }
+  .vocabulary h2 { font-size: 14px; }
+  .vocabulary__terms { font-size: 19px; }
   .ruled-title::after { display: none; }
   .question-list { grid-template-columns: 1fr; gap: 4px; margin-top: 12px; }
   .question-list li { font-size: 21px; padding: 10px 0; }
@@ -362,23 +386,18 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .universe__grid p { font-size: 10px; letter-spacing: 2px; }
   .footer { padding: 30px 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
-
-/* Keep retailer cards independent of an expanded active direct-sale flow. */
-@media (min-width: 768px) {
-  .cards:has(#direct-flow:not([hidden])) { align-items: start; }
-}
+@media (prefers-reduced-motion: reduce) { .card, .voices.is-ready .voices-track, .voices-dot::before { transition: none; } }
 
 /* Secondary review links are separate from the purchase/checkout controls. */
 .card-group { min-width: 0; display: flex; flex-direction: column; }
 .card-group > .card { flex: 1; }
 .review-link { display: flex; min-height: 44px; align-items: center; justify-content: center; padding: 8px 4px; color: var(--azul); font-size: 12px; line-height: 1.4; text-align: center; text-underline-offset: 3px; }
-.pending-label strong { display: inline-block; margin-top: 8px; letter-spacing: 1px; }
 
 /* One review link stays associated with each purchase channel. */
 .card-group--direct:has(> #direct-card[hidden]) { display: none; }
 .review-link { gap: 8px; }
 .review-icon { display: block; flex: 0 0 24px; width: 24px; height: 24px; object-fit: contain; }
+.review-icon--wide { flex-basis: auto; width: 46px; height: 14px; }
 .policy__main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; color: var(--azul); line-height: 1.6; font-size: 16px; }
 .policy__main h1 { font-size: 30px; margin: 16px 0 8px; }
 .policy__main h2 { font-size: 20px; margin: 28px 0 8px; }

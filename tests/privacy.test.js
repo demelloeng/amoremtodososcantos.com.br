@@ -101,6 +101,17 @@ test('privacy policy describes the real processing only', () => {
   assert.match(policy, /href="\/"/);
 });
 
+test('policy names the work canonically and shares the home stylesheet version', () => {
+  const policy = fs.readFileSync(policyPath, 'utf8');
+  assert.match(policy, /<title>Política de privacidade — Amor em todos os cantos — Fissura<\/title>/);
+  assert.match(policy, /Amor em todos os cantos — Fissura<\/em> e permite a compra direta/);
+  assert.doesNotMatch(policy, /série Amor em todos os cantos/);
+  assert.match(policy, /Maringá Cultura\/FLIM/);
+  const version = page => (page.match(/styles\.css\?v=([^"]+)"/) || [])[1];
+  assert.ok(version(html));
+  assert.equal(version(policy), version(html));
+});
+
 // --- consent behavior -------------------------------------------------------
 
 test('undecided visitor sees the banner and GA4 never loads', () => {

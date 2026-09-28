@@ -113,6 +113,28 @@ test('markup exposes accessible quantity controls, contact and status regions', 
   assert.match(html, /styles\.css\?v=/);
 });
 
+test('direct purchase is its own block and keeps Skoob as its review channel', () => {
+  const directAt = html.indexOf('<div class="card-group card-group--direct">');
+  const retailers = html.slice(html.indexOf('<div class="cards">'), directAt);
+  const direct = html.slice(directAt, html.indexOf('</article>', directAt));
+  for (const channel of ['amazon', 'uiclap', 'clube_autores']) {
+    assert.match(retailers, new RegExp(`data-price-channel="${channel}"`), channel);
+  }
+  assert.doesNotMatch(retailers, /id="direct-card"|skoob\.com/i);
+  assert.match(direct, /id="direct-card"/);
+  assert.match(direct, /href="https:\/\/www\.skoob\.com\.br\/pt\/book\/122687117"/);
+});
+
+test('home names the work canonically and drops unavailable content', () => {
+  assert.match(html, /PERGUNTAS SOBRE AMOR EM TODOS OS CANTOS/);
+  assert.match(html, /<summary>Por que “Amor em todos os cantos”\?<\/summary>/);
+  assert.match(html, /<summary>Por que Fissura\?<\/summary><p>Fissura é o subtítulo/);
+  assert.match(html, /IDEIAS E CONCEITOS DA OBRA/);
+  assert.doesNotMatch(html, /<p>Fissura está disponível|PERGUNTAS SOBRE FISSURA|ATRAVESSAM FISSURA|Em Fissura,/);
+  assert.doesNotMatch(html, /primeira viagem|MANIFESTO/);
+  assert.doesNotMatch(html, /voices-nav/);
+});
+
 // --- quantity controls ----------------------------------------------------
 
 test('quantity starts at one and stays within one to three', async () => {
