@@ -180,8 +180,23 @@ test('home names the work canonically and drops unavailable content', () => {
   assert.match(html, /<summary>Por que Fissura\?<\/summary><p>Fissura é o subtítulo/);
   assert.match(html, /IDEIAS E CONCEITOS DA OBRA/);
   assert.doesNotMatch(html, /<p>Fissura está disponível|PERGUNTAS SOBRE FISSURA|ATRAVESSAM FISSURA|Em Fissura,/);
-  assert.doesNotMatch(html, /primeira viagem|MANIFESTO/);
   assert.doesNotMatch(html, /voices-nav/);
+});
+
+test('home preserves the approved author bio and pending manifesto', () => {
+  for (const copy of [
+    'LER O MANIFESTO DE AMOR',
+    'EM BREVE',
+    'Marcos de Mello Silva é engenheiro civil, autor paranaense e escritor de primeira viagem — expressão que, no caso dele, envolve mais cidades, planilhas e crises existenciais do que seria recomendável.',
+    'Sua escrita combina oralidade, humor, memória afetiva, música brasileira, cultura pop e uma atenção quase técnica aos pequenos desastres da vida adulta. Entre suas principais referências estão Manuel Bandeira, Clarice Lispector, Guimarães Rosa, Jô Soares e Paulo Gustavo, além de artistas que transformam sentimento, ritmo e palavra em formas de observar o Brasil.',
+    'Quando não está tentando fazer a realidade caber em algum projeto, Marcos escreve sobre pessoas que também descobriram que a vida raramente respeita planta, cronograma ou memorial descritivo.',
+    'Amor em todos os cantos — Fissura é seu primeiro romance.',
+    'Amor em todos os cantos nasceu de uma ferida.'
+  ]) assert.ok(html.includes(copy), copy);
+
+  assert.match(html, /<span class="pending-label">\s*LER O MANIFESTO DE AMOR<br>\s*<strong>EM BREVE<\/strong>\s*<\/span>/);
+  assert.doesNotMatch(html, /Paranaense, Marcos de Mello Silva escreve a partir do encontro entre cidades/);
+  assert.doesNotMatch(html, /Engenheiro civil · autor de Amor em todos os cantos/);
 });
 
 // --- quantity controls ----------------------------------------------------
