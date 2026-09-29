@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=site-refino-01">
+<link rel="stylesheet" href="styles.css?v=direct-editorial-bronze-01">
 
 </head>
 <body>
@@ -103,7 +103,7 @@
                  aria-label="Compra direta — carregando preço">
           <div class="direct__info">
             <div class="card__info">
-              <span class="card__logo card__logo--direct" aria-hidden="true">✦</span>
+              <span class="card__logo card__logo--direct" aria-hidden="true"><img src="assets/favicon-512.png" alt=""></span>
               <span class="card__text"><span class="card__channel">Compra direta</span>
                 <span class="card__format">Autografado + marca-páginas</span></span>
             </div>
@@ -111,12 +111,16 @@
               <p class="direct__headline">AGORA DÁ PRA COMPRAR DIRETO COMIGO.</p>
               <p class="direct__copy">O livro já está aqui — impresso, esperando autógrafo e endereço.</p>
               <p class="direct__copy">Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.</p>
-              <div class="card__deal"><span class="card__price">R$ 49,99</span><span class="direct__freight"> + frete</span></div>
-              <p class="direct__benefit">Autografado + marca-páginas</p>
+              <div class="direct__commercial">
+                <div class="card__deal"><span class="card__price">R$ 49,99</span><span class="direct__freight"> + frete</span></div>
+                <div class="direct__perks">
+                  <p class="direct__benefit">Autografado + marca-páginas</p>
+                  <p id="direct-payment-methods" class="direct__payment" hidden></p>
+                  <p id="direct-payment-installments" class="direct__payment" hidden></p>
+                </div>
+              </div>
             </div>
             <p id="direct-coming-soon" class="direct__coming-soon" hidden>EM BREVE</p>
-            <p id="direct-payment-methods" class="direct__payment" hidden></p>
-            <p id="direct-payment-installments" class="direct__payment" hidden></p>
           </div>
           <div id="direct-flow" hidden>
             <p id="direct-availability" class="direct__availability" role="status" hidden></p>
@@ -131,14 +135,14 @@
             <dl id="direct-summary" class="direct__summary" hidden>
               <div><dt>Destino</dt><dd id="direct-region">—</dd></div><div><dt>Quantidade</dt><dd id="direct-quantity-summary">—</dd></div>
               <div><dt>Preço unitário</dt><dd id="direct-unit">—</dd></div><div><dt>Subtotal</dt><dd id="direct-subtotal">—</dd></div>
-              <div><dt>Frete cobrado</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
+              <div><dt>Frete</dt><dd id="direct-shipping">—</dd></div><div id="direct-real-row" aria-hidden="true" hidden><dt>Frete real cotado</dt><dd id="direct-real">—</dd></div>
               <div><dt>Prazo</dt><dd id="direct-days">—</dd></div><div class="direct__total"><dt>Total</dt><dd id="direct-total">—</dd></div>
             </dl>
             <button id="direct-buy" class="direct__buy" type="button" disabled>Comprar</button>
             <p id="direct-order-status" class="direct__order-status" role="status" hidden></p>
           </div>
+          <a class="review-link review-link--direct" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Comprou direto? Avalie no Skoob</span></a>
         </article>
-        <a class="review-link review-link--direct" href="https://www.skoob.com.br/pt/book/122687117" target="_blank" rel="noopener noreferrer"><img class="review-icon" src="assets/social-skoob.svg" width="24" height="24" alt="" aria-hidden="true"><span>Comprou direto? Avalie no Skoob</span></a>
       </div>
 
       <div class="retailer-alternatives">

@@ -98,49 +98,62 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .card__benefit { font-size: 13px; line-height: 1.4; font-weight: 600; max-width: 165px; margin-inline: auto; }
 .card__price { color: var(--dourado); font-weight: 800; font-size: 28px; white-space: nowrap; }
 .card__cta { padding: 10px 5px; font-size: 11px; min-height: 44px; }
-.card--direct { background: transparent; color: var(--azul); }
-.card--direct .card__channel { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
-.card--direct .card__format { background: transparent; padding: 0; text-transform: none; font-family: var(--serif); font-weight: 400; font-size: 20px; }
-.card__logo--direct { background: var(--dourado); color: white; font-size: 30px; }
-.card--direct .card__price { color: var(--azul); }
+.card--direct { background: var(--branco); color: var(--azul); }
+.card--direct[hidden], .card--direct [hidden] { display: none !important; }
+.card--direct .card__channel { display: inline-block; padding: 5px 8px; border-radius: 2px; background: var(--branco); color: #a04429; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+.card--direct .card__format { background: transparent; padding: 0; color: var(--branco); text-transform: none; font-family: var(--serif); font-weight: 400; font-size: 20px; }
+.card__logo--direct { width: 36px; height: 36px; background: var(--azul); }
+.card__logo--direct img { width: 100%; height: 100%; object-fit: cover; }
+.card--direct .card__price { color: var(--branco); }
 /* Coming-soon label already exists separately; do not show its duplicate price label. */
 .card--direct:has(#direct-coming-soon:not([hidden])) .card__deal { display: none; }
-.direct__coming-soon { margin-top: auto; padding: 14px 10px; background: #e6ebf1; text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .5px; }
-.direct__payment { font-size: 11px; font-weight: 600; text-align: center; line-height: 1.4; }
-/* Direct purchase: own block under the retailers — sales info beside the checkout steps. */
-.card-group--direct { margin-top: 20px; }
-.card--direct { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; gap: 20px 44px; padding: 24px 28px; }
-.card--direct:has(#direct-flow[hidden]) { grid-template-columns: minmax(0, 1fr); }
-.direct__info { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-#direct-active-offer { display: flex; flex-direction: column; gap: 12px; }
-.direct__headline { margin: 8px 0 0; font-family: var(--serif); font-size: clamp(25px, 3vw, 38px); line-height: 1.08; color: var(--azul); }
-.direct__copy { margin: 0; max-width: 46ch; font-size: 16px; line-height: 1.55; }
-.direct__benefit { margin: 0; font-weight: 800; }
-.direct__freight { font-size: 18px; font-weight: 700; }
-.direct__info .card__info { justify-content: flex-start; min-height: 0; }
-.direct__info .card__deal { margin: 0; text-align: left; }
-.direct__info .direct__payment { text-align: left; font-size: 13px; }
-.card-group--direct > .review-link--direct { align-self: flex-start; margin-top: 4px; padding: 10px 0 0; font-size: 13px; font-weight: 600; text-align: left; }
-#direct-flow { min-width: 0; padding-left: 40px; border-left: 1px solid var(--line); }
+.direct__coming-soon { position: relative; z-index: 1; margin: 18px 32px 28px; padding: 14px 10px; background: #e6ebf1; color: var(--azul); text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .5px; }
+.direct__payment { font-size: 13px; font-weight: 600; line-height: 1.35; }
+/* Direct purchase: editorial opening, bronze offer band, progressive order flow. */
+.card-group--direct { width: 100%; max-width: 800px; margin-top: 20px; }
+.card.card--direct { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; overflow: hidden; }
+.card--direct:has(#direct-active-offer:not([hidden])) .card__format { display: none; }
+.direct__info { position: relative; min-width: 0; overflow: hidden; background: radial-gradient(circle at 95% 10%, #294668, #142a49 70%); color: var(--branco); }
+.direct__info::after { content: ""; position: absolute; top: 16px; right: 8px; width: 230px; height: 230px; background: url("assets/direct-suitcase.svg") center / contain no-repeat; opacity: .2; pointer-events: none; }
+.direct__info .card__info { position: relative; z-index: 1; justify-content: flex-start; min-height: 0; padding: 28px 32px 0; }
+#direct-active-offer { display: flex; flex-direction: column; }
+.direct__headline { position: relative; z-index: 1; max-width: 20ch; margin: 20px 0 16px; padding: 0 32px; font-family: var(--serif); font-size: clamp(31px, 4.2vw, 43px); line-height: 1.02; color: var(--dourado); }
+.direct__copy { position: relative; z-index: 1; max-width: 70ch; margin: 0; padding: 0 32px; font-size: 16px; line-height: 1.5; }
+.direct__copy + .direct__copy { margin-top: 10px; padding-bottom: 30px; }
+.direct__commercial { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 20px 32px; background: #a04429; color: var(--branco); }
+.direct__commercial .card__deal { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0; text-align: left; }
+.card--direct .card__price { font-size: 40px; line-height: 1; letter-spacing: -.05em; }
+.direct__freight { font-size: 14px; font-weight: 700; }
+.direct__perks { display: flex; flex-direction: column; gap: 2px; }
+.direct__benefit { margin: 0; font-size: 13px; font-weight: 800; line-height: 1.35; }
+.direct__info .direct__payment { text-align: left; }
+.card--direct > .review-link--direct { align-self: stretch; justify-content: flex-start; min-height: 44px; margin: 16px 32px 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; text-align: left; }
+#direct-flow { min-width: 0; padding: 22px 32px 0; }
 .direct__label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-.direct__cep { display: flex; flex-wrap: wrap; gap: 8px; }
+.direct__cep { display: flex; gap: 8px; }
 .direct__cep input, .direct__cep button, .direct__buy { min-height: 44px; border: 1px solid var(--line); border-radius: 4px; padding: 10px; }
 .direct__cep input { flex: 1; width: 100%; min-width: 0; }
 .direct__cep button, .direct__buy { background: var(--dourado); color: var(--azul); font-size: 12px; font-weight: 800; }
-.direct__buy { width: 100%; margin-top: 10px; }
+.direct__cep button { flex-shrink: 0; }
+#direct-flow:has(#direct-summary:not([hidden])) #direct-quote { background: transparent; border-color: var(--azul); }
+.direct__buy { display: block; width: 240px; max-width: 100%; margin: 12px 0 0 auto; }
+#direct-summary[hidden] ~ #direct-buy { display: none; }
 .direct__buy:disabled { opacity: .5; cursor: not-allowed; }
 .direct__error { color: #a32924; font-size: 14px; margin-top: 10px; }
-.direct__summary { font-size: 12px; margin: 12px 0 0; }
-.direct__summary div { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; }
+.direct__summary { font-size: 14px; line-height: 1.5; margin: 20px 0 0; }
+.direct__summary div { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; }
+.direct__summary dt, .direct__summary dd { min-width: 0; overflow-wrap: anywhere; }
 .direct__summary dd { margin: 0; text-align: right; }
-.direct__total { border-top: 1px solid var(--line); font-weight: 800; }
+/* Internal hook retained for JS; never presented, including when hidden is removed. */
+#direct-real-row { display: none !important; }
+.direct__summary .direct__total { align-items: baseline; border-top: 1px solid var(--line); margin-top: 8px; padding-top: 12px; font-weight: 800; }
+.direct__total dd { font-size: 24px; }
 #direct-loading { font-size: 13px; margin-top: 10px; }
-.direct__quantity { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.direct__quantity { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 16px; }
 .direct__quantity .direct__label { margin-bottom: 0; }
 .direct__stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 4px; }
 .direct__stepper button { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: var(--azul); font-size: 18px; font-weight: 800; cursor: pointer; }
 .direct__stepper button:disabled { opacity: .4; cursor: not-allowed; }
-.direct__stepper button:focus-visible { outline: 2px solid var(--dourado); outline-offset: 2px; }
 .direct__stepper output { min-width: 32px; text-align: center; font-weight: 800; }
 .direct__hint, .direct__availability, .direct__order-status { font-size: 13px; line-height: 1.4; margin: 0 0 10px; }
 .direct__hint a { color: inherit; }
@@ -259,8 +272,6 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .hero__teaser { font-size: 22px; }
   .cards { gap: 12px; }
   .card { padding-inline: 12px; }
-  .card--direct { padding-inline: 20px; column-gap: 28px; }
-  #direct-flow { padding-left: 28px; }
   .card__channel { font-size: 15px; }
   .card__price { font-size: 24px; }
   .card__logo { width: 32px; height: 32px; }
@@ -323,14 +334,22 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .card__price { font-size: 24px; }
   .card__benefit { font-size: 11px; }
   .card__cta { grid-column: 1 / -1; font-size: 12px; }
-  .card--direct { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
-  .direct__headline { font-size: 28px; }
+  .card.card--direct { padding: 0; }
+  .direct__info .card__info { padding: 20px 18px 0; }
+  .direct__info::after { top: 24px; right: -38px; width: 190px; height: 190px; }
+  .direct__headline { margin-top: 18px; padding: 0 18px; font-size: 32px; }
+  .direct__copy { padding: 0 18px; }
+  .direct__copy + .direct__copy { padding-bottom: 22px; }
+  .direct__commercial { padding: 18px; }
+  .card--direct .card__price { font-size: 34px; }
+  #direct-flow { padding: 20px 18px 0; }
+  .card--direct > .review-link--direct { margin: 16px 18px 12px; }
+  .direct__cep { flex-direction: column; }
+  .direct__buy { width: 100%; }
   .card--direct .card__channel { font-size: 13px; }
-  .card--direct .card__info { gap: 16px; }
+  .card--direct .card__info { gap: 10px; }
   .card--direct .card__format { font-size: 20px; }
-  #direct-flow { padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--line); }
-  .direct__coming-soon { margin-top: 4px; }
-  .direct__payment { font-size: 12px; }
+  .direct__coming-soon { margin: 18px 18px 22px; }
   .accordion-grid { grid-template-columns: 1fr; gap: 8px; }
   .accordion-grid summary { min-height: 48px; }
   summary { font-size: 19px; padding: 10px 12px; }

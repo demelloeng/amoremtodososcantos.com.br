@@ -57,7 +57,12 @@ async function harness(active = true, options = {}) {
   let uuidCounter = 0;
   const session = options.session || storage();
   const local = storage();
+  const destinationRequests = [];
   const fetch = (url, init = {}) => {
+    if (url.startsWith('https://viacep.com.br/ws/')) {
+      if (!options.destinationPending) return Promise.reject(new Error('lookup unavailable'));
+      return new Promise((resolve,reject) => destinationRequests.push({url,init,resolve,reject}));
+    }
     requests.push({url, init});
     if (url === '/config/prices.json') return Promise.resolve(response(200, data));
     if (url.endsWith('/v1/prices')) {
@@ -92,10 +97,11 @@ async function harness(active = true, options = {}) {
   }
   vm.runInNewContext(source, {document: {getElementById: id => ids[id], querySelectorAll: () => []},
     window, fetch, Intl, Error, URLSearchParams, JSON, crypto, encodeURIComponent, CustomEvent,
+    AbortController, setTimeout, clearTimeout,
     IntersectionObserver: options.noIntersectionObserver ? undefined : IntersectionObserver});
   await flush();
   const api = pending.filter(item => !item.url.endsWith('/v1/prices'));
-  return {ids, pending, opened, popupWindows, requests, session, local, flush, commerceEvents, observers,
+  return {ids, pending, opened, popupWindows, requests, session, local, flush, commerceEvents, observers, destinationRequests,
     respond(index, status, payload) { pending[index].resolve(response(status, payload)); },
     reject(index, error) { pending[index].reject(error); }};
 }
@@ -139,13 +145,13 @@ test('direct purchase is its own block and keeps Skoob as its review channel', (
   }
   assert.doesNotMatch(retailers, /id="direct-card"|skoob\.com/i);
   assert.match(direct, /id="direct-card"/);
-  assert.doesNotMatch(direct, /skoob\.com/i);
+  assert.match(direct, /skoob\.com/i);
   for (const approved of ['AGORA DÁ PRA COMPRAR DIRETO COMIGO.', 'O livro já está aqui — impresso, esperando autógrafo e endereço.',
     'Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.',
     'R$ 49,99 + frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
     assert.ok(directText.includes(approved), approved);
   }
-  assert.ok(html.indexOf('skoob.com.br/pt/book/122687117') > html.indexOf('</article>', directAt));
+  assert.ok(direct.indexOf('skoob.com.br/pt/book/122687117') > direct.indexOf('id="direct-order-status"'));
 });
 
 test('hidden and coming soon states keep retailer alternatives usable', async () => {
@@ -531,4 +537,92 @@ test('storage failures do not break the flow', async () => {
   h.respond(h.pending.length - 1, 200, {ok: true, checkout: {url: 'https://example.test/checkout'}, order, access_token: 't'});
   await h.flush();
   assert.equal(h.popupWindows[0].location, 'https://example.test/checkout');
+});
+
+
+// Static presentation contracts; browser geometry is intentionally not exercised here.
+const css = fs.readFileSync(path.join(root, 'styles.css'), 'utf8');
+
+test('internal shipping cost stays excluded even when JS removes hidden', () => {
+  assert.match(html, /<dt>Frete<\/dt><dd id="direct-shipping">/);
+  assert.match(html, /id="direct-real-row"[^>]*aria-hidden="true"/);
+  assert.match(html, /id="direct-real"/);
+  assert.match(css, /#direct-real-row\s*\{[^}]*display:\s*none\s*!important/);
+});
+
+test('purchase presentation follows the summary, not the disabled state', () => {
+  assert.match(css, /#direct-summary\[hidden\]\s*~\s*#direct-buy\s*\{[^}]*display:\s*none/);
+  assert.doesNotMatch(css, /(?:#direct-buy|\.direct__buy):disabled\s*\{[^}]*display:\s*none/);
+  const summaryEnd = html.indexOf('</dl>', html.indexOf('id="direct-summary"'));
+  const buyAt = html.indexOf('id="direct-buy"');
+  const statusAt = html.indexOf('id="direct-order-status"');
+  assert.ok(summaryEnd < buyAt && buyAt < statusAt);
+  assert.doesNotMatch(html.slice(summaryEnd, buyAt), /<\/div>/);
+});
+
+test('active offer suppresses only the header benefit duplicate', () => {
+  assert.match(css, /\.card--direct:has\(#direct-active-offer:not\(\[hidden\]\)\)\s+\.card__format\s*\{[^}]*display:\s*none/);
+  assert.match(html, /class="direct__benefit">Autografado \+ marca-páginas/);
+});
+
+
+test('destination lookup starts only after a successful shipping quote and never blocks buy', async () => {
+  const h=await harness(true,{destinationPending:true});
+  assert.equal(h.destinationRequests.length,0);
+  h.ids['direct-cep'].value='01419-100';
+  await quoted(h);
+  assert.equal(h.ids['direct-region'].textContent,'CEP 01419-100');
+  assert.equal(h.ids['direct-buy'].disabled,false);
+  assert.equal(h.destinationRequests.length,1);
+  const lookup=h.destinationRequests[0];
+  assert.equal(lookup.url,'https://viacep.com.br/ws/01419100/json/');
+  assert.equal(lookup.init.credentials,'omit');
+  assert.equal(lookup.init.referrerPolicy,'no-referrer');
+  lookup.resolve(response(200,{cep:'01419-100',localidade:'São Paulo',uf:'SP'}));
+  await h.flush();
+  assert.equal(h.ids['direct-region'].textContent,'São Paulo/SP — CEP 01419-100');
+  const total=h.ids['direct-total'].textContent;
+  h.ids['direct-buy'].fire('click');
+  const checkout=h.pending.at(-1);
+  assert.deepEqual(JSON.parse(JSON.stringify(checkout.body.confirmed_summary)),makeSummary());
+  assert.equal(h.ids['direct-total'].textContent,total);
+  checkout.resolve(response(200,{checkout:{url:'https://example.test/checkout'}}));await h.flush();
+});
+
+for(const [name,status,payload] of [
+  ['not found',200,{erro:true}],['HTTP failure',503,{}],
+  ['wrong CEP',200,{cep:'80010-020',localidade:'Curitiba',uf:'PR'}],
+  ['missing city',200,{cep:'01419-100',uf:'SP'}],
+  ['invalid state',200,{cep:'01419-100',localidade:'São Paulo',uf:'XX'}]
+]) test('destination keeps quoted CEP on '+name,async()=>{
+  const h=await harness(true,{destinationPending:true});await quoted(h);
+  h.destinationRequests[0].resolve(response(status,payload));await h.flush();
+  assert.equal(h.ids['direct-region'].textContent,'CEP 01419-100');
+  assert.equal(h.ids['direct-buy'].disabled,false);
+});
+
+test('network failure leaves freight and purchase usable',async()=>{
+  const h=await harness(true,{destinationPending:true});await quoted(h);
+  h.destinationRequests[0].reject(new Error('offline'));await h.flush();
+  assert.equal(h.ids['direct-region'].textContent,'CEP 01419-100');
+  assert.equal(h.ids['direct-summary'].hidden,false);
+  assert.equal(h.ids['direct-buy'].disabled,false);
+});
+
+test('late destination cannot overwrite a newer quote',async()=>{
+  const h=await harness(true,{destinationPending:true});await quoted(h);
+  h.ids['direct-cep'].value='80010-020';h.ids['direct-cep'].fire('input');
+  await quoted(h,1,makeSummary(1,{destination_cep:'80010020'}));
+  h.destinationRequests[1].resolve(response(200,{cep:'80010-020',localidade:'Curitiba',uf:'PR'}));await h.flush();
+  h.destinationRequests[0].resolve(response(200,{cep:'01419-100',localidade:'São Paulo',uf:'SP'}));await h.flush();
+  assert.equal(h.ids['direct-region'].textContent,'Curitiba/PR — CEP 80010-020');
+});
+
+test('quantity edit prevents a pending destination from restoring the summary',async()=>{
+  const h=await harness(true,{destinationPending:true});await quoted(h);
+  h.ids['direct-quantity-plus'].fire('click');
+  h.destinationRequests[0].resolve(response(200,{cep:'01419-100',localidade:'São Paulo',uf:'SP'}));await h.flush();
+  assert.equal(h.ids['direct-summary'].hidden,true);
+  assert.equal(h.ids['direct-buy'].disabled,true);
+  assert.equal(h.ids['direct-region'].textContent,'CEP 01419-100');
 });

@@ -99,10 +99,36 @@
     quantityOutput.textContent = String(quantity);
     quantityMinus.disabled = quantity <= MIN_QUANTITY;
   }
+  // Destination is display-only: never changes the server-confirmed commercial summary.
+  function showDestination(confirmed) {
+    var cep = String(confirmed.destination_cep || '').replace(/\D/g, '');
+    var destination = document.getElementById('direct-region');
+    var formatted = cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+    destination.textContent = 'CEP ' + formatted;
+    if (!/^\d{8}$/.test(cep)) return;
+    var revision = quoteRevision;
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 4000);
+    fetch('https://viacep.com.br/ws/' + cep + '/json/', {
+      credentials: 'omit', referrerPolicy: 'no-referrer', signal: controller.signal
+    }).then(function (response) {
+      if (!response.ok) throw new Error('Destination unavailable');
+      return response.json();
+    }).then(function (data) {
+      if (controller.signal.aborted || revision !== quoteRevision || currentSummary !== confirmed ||
+          summary.hidden || cepInput.value.replace(/\D/g, '') !== cep) return;
+      if (!data || data.erro || typeof data.cep !== 'string' ||
+          data.cep.replace(/\D/g, '') !== cep || typeof data.localidade !== 'string' ||
+          !data.localidade.trim() || typeof data.uf !== 'string' ||
+          !/^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)$/.test(data.uf)) return;
+      destination.textContent = data.localidade.trim() + '/' + data.uf + ' — CEP ' + formatted;
+    }).catch(function () { /* The quoted CEP remains visible; freight and checkout are independent. */ })
+      .finally(function () { clearTimeout(timer); });
+  }
   function showQuote(quote, confirmed) {
     currentQuote = quote; currentSummary = confirmed;
     quotedQuantity = confirmed.quantity;
-    document.getElementById('direct-region').textContent = quote.is_curitiba ? 'Curitiba' : 'Fora de Curitiba';
+    showDestination(confirmed);
     document.getElementById('direct-quantity-summary').textContent = String(confirmed.quantity);
     document.getElementById('direct-unit').textContent = money(confirmed.unit_price_cents);
     document.getElementById('direct-subtotal').textContent = money(confirmed.subtotal_cents);
