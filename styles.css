@@ -124,7 +124,7 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .direct__commercial .card__deal { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0; text-align: left; }
 .card--direct .card__price { font-size: 28px; }
 .direct__freight { font-size: 18px; font-weight: 700; }
-.direct__perks { display: flex; flex-direction: column; gap: 2px; }
+.direct__perks { display: flex; flex-direction: column; gap: 2px; margin-left: auto; }
 .direct__benefit { margin: 0; font-weight: 800; }
 .direct__info .direct__payment { text-align: left; font-size: 13px; line-height: 1.4; }
 .card--direct > .review-link--direct { align-self: stretch; justify-content: flex-start; min-height: 44px; margin: 16px 32px 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 600; text-align: left; }
@@ -184,7 +184,7 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .fic__text { border-left: 1px solid #aeb9cd; padding-left: 40px; font-family: var(--serif); font-size: 24px; line-height: 1.36; }
 .fic__text > p { margin-bottom: 18px; }
 .fic__text > p:first-child { margin-bottom: 0; }
-.fic__payoff { font-size: 30px; font-style: italic; margin-top: 16px; }
+.fic__payoff { font-size: 30px; font-style: normal; font-weight: 700; text-transform: uppercase; margin-top: 16px; }
 .elenco { padding-bottom: 40px; }
 .cast-track { list-style: none; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); margin: 0; padding: 4px 0; }
 .cast-track li { min-width: 0; text-align: center; padding: 0 16px; border-left: 1px solid var(--line); }
@@ -341,6 +341,7 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .direct__copy { padding: 0 18px; }
   .direct__copy + .direct__copy { padding-bottom: 22px; }
   .direct__commercial { padding: 18px; }
+  .direct__perks { width: 100%; margin-left: 0; }
   .card--direct .card__price { font-size: 24px; }
   #direct-flow { padding: 20px 18px 0; }
   .card--direct > .review-link--direct { margin: 16px 18px 12px; }
