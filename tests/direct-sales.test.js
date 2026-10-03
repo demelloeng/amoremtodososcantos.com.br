@@ -28,7 +28,8 @@ const IDS = [
   'direct-payment-installments', 'direct-quote', 'direct-region', 'direct-unit', 'direct-quantity-summary',
   'direct-subtotal', 'direct-shipping', 'direct-real', 'direct-real-row', 'direct-days', 'direct-total',
   'checkout-return', 'direct-quantity', 'direct-quantity-minus', 'direct-quantity-plus',
-  'direct-quantity-contact', 'direct-availability', 'direct-order-status', 'direct-active-offer'
+  'direct-quantity-contact', 'direct-availability', 'direct-order-status', 'direct-active-offer',
+  'prices-error', 'direct-curitiba-note', 'direct-discount', 'direct-previous-price'
 ];
 
 function element() {
@@ -81,7 +82,7 @@ async function harness(active = true, options = {}) {
       return new Promise((resolve,reject) => destinationRequests.push({url,init,resolve,reject}));
     }
     requests.push({url, init});
-    if (url === '/config/prices.json') return Promise.resolve(response(200, data));
+    if (url === '/config/prices.json') return options.pricesFail ? Promise.resolve(response(500, {})) : Promise.resolve(response(200, data));
     if (url.endsWith('/v1/prices')) {
       return options.inventory ? Promise.resolve(response(200, {ok: true, inventory_status: options.inventory}))
         : Promise.reject(new Error('offline'));
@@ -277,7 +278,7 @@ test('configured prices render with physical-channel freight parity and accessib
   const h = await harness();
   assert.equal(h.cards.direct.price.textContent, 'R$ 39,90');
   assert.match(h.cards.direct.attributes['aria-label'], /R\$ 39,90 mais frete/);
-  assert.match(h.cards.direct.attributes['aria-label'], /preço anterior R\$ 49,99/);
+  assert.match(h.cards.direct.attributes['aria-label'].replace(/ /g, ' '), /preço anterior R\$ 49,99/);
   assert.match(h.cards.direct.attributes['aria-label'], /R\$ 10 OFF/);
 
   assert.equal(h.cards.uiclap.price.textContent, 'R$ 45,90');
@@ -287,6 +288,37 @@ test('configured prices render with physical-channel freight parity and accessib
 
   assert.equal(h.cards.amazon.price.textContent, 'ou R$ 9,90');
   assert.doesNotMatch(h.cards.amazon.attributes['aria-label'], /frete/i);
+});
+
+test('discount and previous price come from configuration and never overstate the saving', async () => {
+  assert.equal(config.channels.direct.reference_amount_cents, 4999);
+  const h = await harness();
+  assert.equal(h.ids['direct-previous-price'].textContent.replace(/ /g, ' '), 'R$ 49,99');
+  assert.equal(h.ids['direct-discount'].textContent, 'R$ 10 OFF');
+  assert.ok(config.channels.direct.reference_amount_cents - config.channels.direct.amount_cents >= 1000);
+  assert.doesNotMatch(source, /R\$ 49,99|R\$ 10 OFF/);
+});
+
+test('curitiba freight is announced before the CEP from the configured rule', async () => {
+  const h = await harness();
+  assert.equal(h.ids['direct-curitiba-note'].textContent.replace(/ /g, ' '), 'Frete de R$ 5,90 para Curitiba');
+  assert.equal(h.ids['direct-curitiba-note'].hidden, false);
+  assert.match(html, /id="direct-curitiba-note"/);
+  const off = await harness(false);
+  assert.match(html, /id="direct-curitiba-note"[^>]*\shidden>/);
+  assert.equal(off.ids['direct-active-offer'].hidden, true);
+  assert.equal(off.ids['direct-flow'].hidden, true);
+});
+
+test('price loading failure is visible outside the hidden direct card and keeps retailer links usable', async () => {
+  const h = await harness(true, {pricesFail: true});
+  assert.equal(h.ids['prices-error'].hidden, false);
+  assert.match(h.ids['prices-error'].textContent, /Não foi possível carregar os preços/);
+  assert.equal(h.cards.uiclap.price.textContent, 'Ver na loja');
+  assert.doesNotMatch(h.cards.uiclap.attributes['aria-label'], /carregando/i);
+  assert.equal(h.ids['direct-card'].hidden, true);
+  const errorAt = html.indexOf('id="prices-error"');
+  assert.ok(errorAt > html.indexOf('id="comprar"') && errorAt < html.indexOf('id="direct-card"'));
 });
 
 test('physical retailer cards show freight while the Kindle card does not', () => {
@@ -539,7 +571,7 @@ test('coming soon leaves checkout flow unavailable', async () => {
 
 for (const [state, message] of [['success', 'não confirma o pagamento'], ['cancel', 'cancelada'], ['expired', 'expirou']]) {
   test(`checkout return ${state} reports only the navigation state`, async () => {
-    const h = await harness(true, {search: `?checkout=production-${state}`});
+    const h = await harness(true, {search: `?checkout=production-${state}&order_id=ord-1`});
     assert.equal(h.ids['checkout-return'].hidden, false);
     assert.match(h.ids['checkout-return'].textContent.toLowerCase(), new RegExp(message));
     assert.doesNotMatch(h.ids['checkout-return'].textContent.toLowerCase(), /pagamento confirmado|estoque/);
@@ -547,6 +579,14 @@ for (const [state, message] of [['success', 'não confirma o pagamento'], ['canc
     assert.equal(h.commerceEvents.some(event => event.event === 'purchase'), false);
   });
 }
+
+test('a bare checkout return link is shown but not measured without an order id', async () => {
+  for (const search of ['?checkout=production-success', '?checkout=production-success&order_id=a%20b%3Cx%3E']) {
+    const h = await harness(true, {search});
+    assert.equal(h.ids['checkout-return'].hidden, false);
+    assert.equal(h.commerceEvents.some(event => event.event === 'direct_checkout_return'), false);
+  }
+});
 
 test('unrecognized checkout return state is neither shown nor measured', async () => {
   const h = await harness(true, {search: '?checkout=production-paid'});
@@ -566,6 +606,10 @@ test('return queries order status with bearer header, never URL token', async ()
   await h.flush();
   assert.equal(h.ids['direct-order-status'].hidden, false);
   assert.match(h.ids['direct-order-status'].textContent, /Pagamento confirmado/);
+  const paid = h.commerceEvents.filter(event => event.event === 'direct_payment_confirmed');
+  assert.equal(paid.length, 1);
+  assert.equal(paid[0].quantity, 1);
+  assert.equal(paid[0].sales_channel, 'direct');
 });
 
 test('pending status never claims payment and mismatched order is not queried', async () => {
@@ -576,6 +620,7 @@ test('pending status never claims payment and mismatched order is not queried', 
   await h.flush();
   assert.doesNotMatch(h.ids['direct-order-status'].textContent, /Pagamento confirmado/);
   assert.match(h.ids['direct-order-status'].textContent, /ainda não/i);
+  assert.equal(h.commerceEvents.some(event => event.event === 'direct_payment_confirmed'), false);
 
   const other = await harness(true, {search: '?checkout=production-success&order_id=ord-2', session});
   assert.equal(other.pending.some(item => item.url.includes('/v1/orders/')), false);

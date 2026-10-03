@@ -23,6 +23,10 @@
   var availability = document.getElementById('direct-availability');
   var orderStatus = document.getElementById('direct-order-status');
   var directActiveOffer = document.getElementById('direct-active-offer');
+  var pricesError = document.getElementById('prices-error');
+  var curitibaNote = document.getElementById('direct-curitiba-note');
+  var directDiscount = document.getElementById('direct-discount');
+  var directPreviousPrice = document.getElementById('direct-previous-price');
   var ITEM = {item_id:'fissura_fisico_direto', item_name:'Amor em todos os cantos — Fissura', sales_channel:'direct'};
   function commerce(eventName, fields) {
     var detail = {event:eventName};
@@ -38,6 +42,17 @@
   function money(cents) { return new Intl.NumberFormat('pt-BR', {style:'currency',currency:'BRL'}).format(cents / 100); }
   function channelName(id) { return {direct:'Compra direta',amazon:'Amazon',uiclap:'UICLAP',clube_autores:'Clube de Autores'}[id]; }
   function fail(message) { errorBox.textContent = message; errorBox.hidden = false; }
+  function pricesUnavailable() {
+    // The direct card is hidden until prices load, so its own error box would never be seen.
+    pricesError.textContent = 'Não foi possível carregar os preços. Os botões abaixo continuam levando às lojas.';
+    pricesError.hidden = false;
+    document.querySelectorAll('[data-price-channel]').forEach(function (card) {
+      var channel = card.dataset.priceChannel;
+      if (channel === 'direct') return;
+      card.querySelector('.card__price').textContent = 'Ver na loja';
+      card.setAttribute('aria-label', 'Comprar — ' + channelName(channel));
+    });
+  }
   // Session storage only: the order access token must not outlive the tab.
   function readSession(key) {
     try { var raw = window.sessionStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
@@ -67,7 +82,9 @@
     if (checkoutReturn && messages[state]) {
       checkoutReturn.textContent = messages[state];
       checkoutReturn.hidden = false;
-      commerce('direct_checkout_return', {return_state:state});
+      // A bare ?checkout= link is forgeable: only a return that names an order is measured.
+      var returnOrderId = new URLSearchParams(window.location.search).get('order_id');
+      if (/^[A-Za-z0-9_-]{1,64}$/.test(returnOrderId || '')) commerce('direct_checkout_return', {return_state:state});
     }
     return Boolean(messages[state]);
   }
@@ -93,6 +110,10 @@
         if (!result.ok || !result.data.order) return;
         orderStatus.textContent = describeOrder(result.data.order);
         orderStatus.hidden = false;
+        // Browser-observed confirmation from the authenticated API, never from the return URL.
+        if (result.data.order.payment_status === 'PAID' && typeof result.data.order.quantity === 'number') {
+          commerce('direct_payment_confirmed', itemFields(result.data.order.quantity));
+        }
       }).catch(function () { /* status stays unknown to the visitor */ });
   }
   function renderQuantity() {
@@ -161,6 +182,10 @@
   }
   fetch('/config/prices.json', {cache:'no-store'}).then(function (response) { if (!response.ok) throw new Error(); return response.json(); }).then(function (data) {
     prices = data.channels;
+    var curitiba = data.shipping_rules && data.shipping_rules.curitiba_local;
+    if (curitibaNote && curitiba && curitiba.enabled && typeof curitiba.amount_cents === 'number') {
+      curitibaNote.textContent = 'Frete de ' + money(curitiba.amount_cents) + ' para Curitiba';
+    }
     apiBase = String(data.api_base_url || '').replace(/\/+$/, '');
     var directStatus = data.direct_sale.status;
     var payment = data.direct_sale.payment;
@@ -191,6 +216,7 @@
       comingSoon.hidden = true;
       paymentMethods.hidden = false;
       paymentInstallments.hidden = !installmentsEnabled;
+      if (curitibaNote && curitibaNote.textContent) curitibaNote.hidden = false;
       var viewed = false;
       function recordView() {
         if (viewed) return;
@@ -234,8 +260,17 @@
       card.querySelector('.card__price').textContent = (isAmazonUnlimited ? 'ou ' : '') + label;
       var channel = card.dataset.priceChannel;
       if (channel === 'direct') {
-        card.setAttribute('aria-label', 'Compra direta por ' + label +
-          ' mais frete — preço anterior R$ 49,99 — R$ 10 OFF');
+        var reference = item.reference_amount_cents, saving = typeof reference === 'number' ? reference - item.amount_cents : 0;
+        if (saving >= 100) {
+          // Rounded down, so the headline never promises more than the real difference.
+          directDiscount.textContent = 'R$ ' + Math.floor(saving / 100) + ' OFF';
+          directPreviousPrice.textContent = money(reference);
+        } else if (typeof reference === 'number') {
+          directDiscount.hidden = true;
+          directPreviousPrice.hidden = true;
+        }
+        card.setAttribute('aria-label', 'Compra direta por ' + label + ' mais frete' +
+          (saving >= 100 ? ' — preço anterior ' + money(reference) + ' — ' + directDiscount.textContent : ''));
       } else {
         var freightLabel = channel === 'uiclap' || channel === 'clube_autores' ? ' mais frete' : '';
         card.setAttribute('aria-label', channelName(channel) +
@@ -244,7 +279,7 @@
       if (item.amount_cents !== null) card.dataset.price = (item.amount_cents / 100).toFixed(2);
     });
     queryOrderStatus();
-  }).catch(function () { fail('Não foi possível carregar os preços.'); });
+  }).catch(pricesUnavailable);
   function invalidateQuote() {
     quoteRevision += 1;
     currentQuote = null; currentSummary = null; quotedCep = '';

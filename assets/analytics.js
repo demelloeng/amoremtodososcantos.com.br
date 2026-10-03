@@ -4,11 +4,13 @@
     uiclap: 'UICLAP',
     clube_autores: 'Clube de Autores'
   };
+  var INTERNAL_CTA_EVENTS = ['click_compre_aqui', 'click_conheca_fic'];
   var COMMERCE_EVENTS = [
     'view_item',
     'add_shipping_info',
     'begin_checkout',
     'direct_checkout_created',
+    'direct_payment_confirmed',
     'direct_checkout_error',
     'direct_checkout_return'
   ];
@@ -34,6 +36,15 @@
     };
     if (isFinite(price)) metadata.price = price;
     send(eventName, metadata);
+  }
+
+  function trackInternalCta(link) {
+    var eventName = link.getAttribute('data-analytics-cta');
+    if (INTERNAL_CTA_EVENTS.indexOf(eventName) === -1) return;
+    send(eventName, {
+      placement: link.getAttribute('data-analytics-placement'),
+      destination: link.getAttribute('data-analytics-destination')
+    });
   }
 
   function trackCommerce(event) {
@@ -64,6 +75,9 @@
     window.addEventListener('fissura:commerce', trackCommerce);
     document.querySelectorAll('[data-analytics-event]').forEach(function (link) {
       link.addEventListener('click', function () { trackPurchaseClick(link); });
+    });
+    document.querySelectorAll('[data-analytics-cta]').forEach(function (link) {
+      link.addEventListener('click', function () { trackInternalCta(link); });
     });
   }
 

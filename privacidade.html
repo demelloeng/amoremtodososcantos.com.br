@@ -31,9 +31,10 @@ o site realmente faz, de acordo com a Lei Geral de Proteção de Dados (LGPD, Le
 
 <h2>Medição de audiência</h2>
 <p>O site usa o <strong>Simple Analytics</strong> para produzir estatísticas agregadas de páginas acessadas,
-origem/referrer, parâmetros UTM, cliques nos canais externos de compra e etapas do fluxo de Compra Direta:
-visualização da oferta, cálculo de frete concluído, início do checkout, criação do checkout, falha técnica do
-checkout e retorno do checkout.</p>
+origem/referrer, parâmetros UTM, cliques nos botões "Compre aqui" e "Conheça a fic" do topo da página, cliques nos
+canais externos de compra e etapas do fluxo de Compra Direta: visualização da oferta, cálculo de frete concluído,
+início do checkout, criação do checkout, falha técnica do checkout, retorno do checkout e confirmação de pagamento.
+Essas contagens indicam ações no site, não identificam quem as fez.</p>
 <p>Essa medição não usa cookies nem usa <code>localStorage</code> ou <code>sessionStorage</code> para identificar
 visitantes, não cria perfil individual e não usa identificador persistente. O Simple Analytics descarta o
 endereço IP e não envia para o analytics nome, e-mail, CPF, telefone, endereço ou CEP.</p>
@@ -41,8 +42,11 @@ endereço IP e não envia para o analytics nome, e-mail, CPF, telefone, endereç
 <h2>Compra direta</h2>
 <ul>
   <li>Para calcular o frete, o site envia o <strong>CEP</strong> de entrega e a quantidade ao nosso servidor, que
-    roda no <strong>Google Cloud</strong> (Cloud Run, região de São Paulo) e consulta a
+    roda no <strong>Google Cloud</strong> (São Paulo) e consulta a
     <strong>SuperFrete</strong> com o CEP e as medidas do pacote.</li>
+  <li>Depois que o frete é calculado, o seu navegador também envia o CEP ao <strong>ViaCEP</strong>, serviço
+    público de consulta de CEP, apenas para mostrar a cidade e o estado de destino. Essa consulta não usa
+    cookies nem informa a página de origem.</li>
   <li>Ao comprar, o pedido é registrado no <strong>Firestore</strong> (Google Cloud, São Paulo) com número do
     pedido, CEP de entrega, quantidade, valores, prazo e situação do pagamento e da entrega.</li>
   <li>O pagamento é feito no checkout do <strong>Asaas</strong>, que coleta os dados do pagador (como nome,
@@ -54,9 +58,8 @@ endereço IP e não envia para o analytics nome, e-mail, CPF, telefone, endereç
 
 <h2>Armazenamento no navegador</h2>
 <ul>
-  <li><code>sessionStorage</code>, chaves <code>ma-fissura:order</code> e <code>ma-fissura:attempt</code>:
-    número do pedido, credencial de consulta do pedido e identificador da tentativa de compra, apagados quando
-    a aba é fechada. São necessários para o funcionamento da compra.</li>
+  <li><code>sessionStorage</code>: número do pedido, credencial de consulta do pedido e identificador da
+    tentativa de compra, apagados quando a aba é fechada. São necessários para o funcionamento da compra.</li>
 </ul>
 
 <h2>Seus direitos</h2>

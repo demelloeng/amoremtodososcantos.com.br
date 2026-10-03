@@ -234,8 +234,6 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
 .vocabulary__intro { margin-top: 12px; font-size: 14px; color: #586780; }
 .vocabulary__terms { margin-top: 4px; font-family: var(--serif); font-size: 20px; line-height: 1.45; }
 .editorial-faq { padding-top: 12px; padding-bottom: 32px; }
-.question-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
-.question-list li { border-bottom: 1px solid var(--line); padding: 8px 12px; font-family: var(--serif); font-size: 21px; line-height: 1.3; }
 .closing { background: #182e4e; color: var(--branco); }
 .closing .section { display: flex; align-items: center; justify-content: center; gap: 40px; padding-block: 22px; }
 .closing p { font-size: 25px; font-weight: 800; }
@@ -395,8 +393,6 @@ details p { padding: 6px 18px 18px; line-height: 1.4; }
   .vocabulary h2 { font-size: 14px; }
   .vocabulary__terms { font-size: 19px; }
   .ruled-title::after { display: none; }
-  .question-list { grid-template-columns: 1fr; gap: 4px; margin-top: 12px; }
-  .question-list li { font-size: 21px; padding: 10px 0; }
   .closing { background: transparent; color: var(--azul); padding: 0 20px 24px; }
   .closing .section { width: 100%; display: flex; flex-direction: column; gap: 8px; background: var(--dourado); border-radius: 5px; padding: 20px 12px 8px; }
   .closing p { font-size: 16px; text-align: center; }

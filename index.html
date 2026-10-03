@@ -69,7 +69,7 @@
       <p>Um romance. Ou ficção.<br>Ou romance fictício? Ainda não sei.</p>
       <p>O que sei: é uma fic sobre uma engenheira<br><strong>TOTALMENTE DESEQUILIBRADA</strong><br>que percorre o Brasil a trabalho.</p>
     </div>
-    <div class="hero__actions"><a class="button" href="#comprar">COMPRE AQUI</a><a class="button button--outline" href="#a-fic">CONHEÇA A FIC</a></div>
+    <div class="hero__actions"><a class="button" href="#comprar" data-analytics-cta="click_compre_aqui" data-analytics-placement="hero" data-analytics-destination="comprar">COMPRE AQUI</a><a class="button button--outline" href="#a-fic" data-analytics-cta="click_conheca_fic" data-analytics-placement="hero" data-analytics-destination="a_fic">CONHEÇA A FIC</a></div>
   </div>
 
   <div class="hero__images">
@@ -95,6 +95,7 @@
   <section class="comprar" id="comprar" aria-labelledby="comprar-title">
     <div class="comprar__inner">
       <h2 class="comprar__title" id="comprar-title">Onde comprar</h2>
+      <p id="prices-error" class="direct__error" role="alert" hidden></p>
 
       <!-- Direct purchase is the primary offer, before retailer alternatives in visual and DOM order. -->
       <div class="card-group card-group--direct">
@@ -109,9 +110,9 @@
             </div>
             <div id="direct-active-offer" hidden>
               <div class="direct__offer">
-                <span class="direct__discount">R$ 10 OFF</span>
+                <span id="direct-discount" class="direct__discount">R$ 10 OFF</span>
                 <span class="direct__current-price"><span class="card__price">Carregando…</span></span>
-                <span class="direct__reference"><span class="direct__previous-price">R$ 49,99</span><span class="direct__freight"> + frete</span></span>
+                <span class="direct__reference"><span id="direct-previous-price" class="direct__previous-price">R$ 49,99</span><span class="direct__freight"> + frete</span></span>
                 <p class="direct__benefit direct__benefit--offer">Autografado + marca-páginas</p>
               </div>
               <p class="direct__headline">AGORA DÁ PRA COMPRAR DIRETO COMIGO.</p>
@@ -120,6 +121,7 @@
               <div class="direct__commercial">
                 <div class="direct__perks">
                   <p class="direct__benefit">Autografado + marca-páginas</p>
+                  <p id="direct-curitiba-note" class="direct__payment" hidden></p>
                   <p id="direct-payment-methods" class="direct__payment" hidden></p>
                   <p id="direct-payment-installments" class="direct__payment" hidden></p>
                 </div>

@@ -22,11 +22,15 @@ function element(attributes = {}) {
 
 function analyticsPage() {
   const links = [];
+  const ctas = [];
   const listeners = {};
   const calls = [];
   const document = {
     readyState: 'complete',
-    querySelectorAll(selector) { return selector === '[data-analytics-event]' ? links : []; },
+    querySelectorAll(selector) {
+      if (selector === '[data-analytics-event]') return links;
+      return selector === '[data-analytics-cta]' ? ctas : [];
+    },
     addEventListener() {}
   };
   const window = {
@@ -42,7 +46,7 @@ function analyticsPage() {
     CustomEvent: function (type, init = {}) { this.type = type; this.detail = init.detail; }
   };
   vm.createContext(context);
-  return {window, context, links, calls, run() { vm.runInContext(analyticsSource, context); }};
+  return {window, context, links, ctas, calls, run() { vm.runInContext(analyticsSource, context); }};
 }
 
 test('public page loads the official Simple Analytics script after the queue placeholder', () => {
@@ -74,6 +78,15 @@ test('analytics consent banner and preference control are removed while the poli
   assert.doesNotMatch(html, /id="privacy-banner"|id="privacy-accept"|id="privacy-reject"|Aceitar|Permitir medição/);
   assert.doesNotMatch(html, /id="privacy-preferences"|Preferências de privacidade/);
   assert.match(html, /href="privacidade\.html"[^>]*>Política de privacidade<\/a>/i);
+});
+
+test('every analytics event and the CEP lookup are declared in the policy', () => {
+  const normalized = policy.replace(/\s+/g, ' ');
+  for (const term of ['Compre aqui', 'Conheça a fic', 'confirmação de pagamento', 'ViaCEP']) {
+    assert.ok(normalized.includes(term), term);
+  }
+  assert.doesNotMatch(policy, /Cloud Run|ma-fissura:/);
+  assert.match(directSalesSource, /viacep\.com\.br/);
 });
 
 test('privacy policy describes Simple Analytics and preserves purchase processors', () => {
@@ -113,6 +126,52 @@ test('all retailer event names remain in the public markup', () => {
   assert.match(html, /data-product-format=/);
 });
 
+test('hero CTAs keep their anchors and carry internal analytics attributes', () => {
+  const hero = html.match(/<div class="hero__actions">(.*?)<\/div>/s)[1];
+  assert.match(hero, /<a class="button" href="#comprar" data-analytics-cta="click_compre_aqui" data-analytics-placement="hero" data-analytics-destination="comprar">COMPRE AQUI<\/a>/);
+  assert.match(hero, /<a class="button button--outline" href="#a-fic" data-analytics-cta="click_conheca_fic" data-analytics-placement="hero" data-analytics-destination="a_fic">CONHEÇA A FIC<\/a>/);
+  assert.doesNotMatch(hero, /data-analytics-event|data-retailer|data-price|data-product-format/);
+  assert.equal((html.match(/data-analytics-cta=/g) || []).length, 2);
+});
+
+test('hero CTA clicks send one event each with only placement and destination', () => {
+  const p = analyticsPage();
+  const buy = element({'data-analytics-cta': 'click_compre_aqui', 'data-analytics-placement': 'hero',
+    'data-analytics-destination': 'comprar', href: '#comprar'});
+  const fic = element({'data-analytics-cta': 'click_conheca_fic', 'data-analytics-placement': 'hero',
+    'data-analytics-destination': 'a_fic', href: '#a-fic'});
+  const amazon = element({'data-analytics-event': 'click_amazon', 'data-retailer': 'amazon',
+    'data-product-format': 'ebook_kindle', 'data-price': '9.90'});
+  p.ctas.push(buy, fic);
+  p.links.push(amazon);
+  p.run();
+  buy.fire('click');
+  assert.deepEqual(JSON.parse(JSON.stringify(p.calls)), [
+    ['click_compre_aqui', {placement: 'hero', destination: 'comprar'}]
+  ]);
+  fic.fire('click');
+  assert.deepEqual(JSON.parse(JSON.stringify(p.calls.slice(1))), [
+    ['click_conheca_fic', {placement: 'hero', destination: 'a_fic'}]
+  ]);
+  for (const [, metadata] of p.calls) {
+    for (const key of ['retailer', 'price', 'product_format', 'currency']) assert.ok(!(key in metadata), key);
+  }
+  amazon.fire('click');
+  assert.equal(p.calls.length, 3);
+  assert.equal(p.calls[2][0], 'click_amazon');
+  assert.equal(p.calls[2][1].retailer, 'Amazon');
+});
+
+test('hero CTAs are not also selected by the retailer click handler', () => {
+  assert.doesNotMatch(html, /data-analytics-cta="[^"]*"[^>]*data-analytics-event|data-analytics-event="[^"]*"[^>]*data-analytics-cta/);
+  const p = analyticsPage();
+  const buy = element({'data-analytics-cta': 'click_compre_aqui', 'data-analytics-placement': 'hero',
+    'data-analytics-destination': 'comprar'});
+  p.ctas.push(buy);
+  p.run();
+  assert.equal((buy.listeners.click || []).length, 1);
+});
+
 test('commerce events are converted to flat Simple Analytics metadata', () => {
   const p = analyticsPage();
   p.run();
@@ -125,11 +184,11 @@ test('commerce events are converted to flat Simple Analytics metadata', () => {
   }]]);
 });
 
-test('commerce allowlist supports six events and drops PII, tokens and purchase', () => {
+test('commerce allowlist supports seven events and drops PII, tokens and purchase', () => {
   const p = analyticsPage();
   p.run();
   const allowed = ['view_item', 'add_shipping_info', 'begin_checkout', 'direct_checkout_created',
-    'direct_checkout_error', 'direct_checkout_return'];
+    'direct_payment_confirmed', 'direct_checkout_error', 'direct_checkout_return'];
   for (const event of allowed) {
     p.window.dispatchEvent(new p.context.CustomEvent('fissura:commerce', {detail: {
       event, currency: 'BRL', value: 49.99, quantity: 1, item_id: 'fissura_fisico_direto',
