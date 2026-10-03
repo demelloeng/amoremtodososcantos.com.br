@@ -614,7 +614,29 @@ test('purchase presentation follows the summary, not the disabled state', () => 
 
 test('active offer suppresses only the header benefit duplicate', () => {
   assert.match(css, /\.card--direct:has\(#direct-active-offer:not\(\[hidden\]\)\)\s+\.card__format\s*\{[^}]*display:\s*none/);
-  assert.match(html, /class="direct__benefit">Autografado \+ marca-páginas/);
+  assert.match(html, /class="direct__benefit direct__benefit--offer">Autografado \+ marca-páginas/);
+  assert.match(html, /class="direct__commercial">[\s\S]*class="direct__benefit">Autografado \+ marca-páginas/);
+});
+
+test('direct offer leads with discount and dynamic price before editorial copy', () => {
+  const activeStart = html.indexOf('id="direct-active-offer"');
+  const activeEnd = html.indexOf('id="direct-coming-soon"', activeStart);
+  const activeOffer = html.slice(activeStart, activeEnd);
+  const offerAt = activeOffer.indexOf('class="direct__offer"');
+  const discountAt = activeOffer.indexOf('class="direct__discount"');
+  const currentPriceAt = activeOffer.indexOf('class="direct__current-price"');
+  const previousPriceAt = activeOffer.indexOf('class="direct__previous-price"');
+  const benefitAt = activeOffer.indexOf('class="direct__benefit direct__benefit--offer"');
+  const headlineAt = activeOffer.indexOf('class="direct__headline"');
+  const commercialAt = activeOffer.indexOf('class="direct__commercial"');
+
+  assert.ok(offerAt >= 0 && offerAt < headlineAt);
+  assert.ok(discountAt > offerAt && discountAt < currentPriceAt);
+  assert.ok(currentPriceAt < previousPriceAt && previousPriceAt < benefitAt && benefitAt < headlineAt);
+  assert.ok(headlineAt < commercialAt);
+  assert.doesNotMatch(activeOffer.slice(commercialAt), /card__price|direct__previous-price|direct__discount/);
+  assert.match(css, /\.direct__offer\s*\{[^}]*display:\s*flex/);
+  assert.match(css, /\.direct__offer\s+\.card__price\s*\{[^}]*font-size:\s*clamp\(/);
 });
 
 
