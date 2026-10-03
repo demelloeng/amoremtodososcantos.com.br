@@ -7,12 +7,12 @@
     "payment": {
       "pix_enabled": true,
       "credit_card_enabled": true,
-      "max_installments": 2
+      "max_installments": 3
     }
   },
   "channels": {
     "direct": {
-      "amount_cents": 4999,
+      "amount_cents": 3990,
       "status": "active"
     },
     "amazon": {
@@ -35,7 +35,7 @@
       "amount_cents": 0
     },
     "curitiba_local": {
-      "enabled": false,
+      "enabled": true,
       "amount_cents": 590
     }
   }
