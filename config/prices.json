@@ -13,7 +13,7 @@
   "channels": {
     "direct": {
       "amount_cents": 3990,
-      "reference_amount_cents": 4999,
+      "reference_amount_cents": 4990,
       "status": "active"
     },
     "amazon": {

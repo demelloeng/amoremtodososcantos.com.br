@@ -167,7 +167,7 @@ test('direct purchase is its own block and keeps Skoob as its review channel', (
   assert.match(direct, /skoob\.com/i);
   for (const approved of ['AGORA DÁ PRA COMPRAR DIRETO COMIGO.', 'O livro já está aqui — impresso, esperando autógrafo e endereço.',
     'Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.',
-    'R$ 49,99', 'R$ 10 OFF', '+ frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
+    'R$ 49,90', 'R$ 10 OFF', '+ frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
     assert.ok(directText.includes(approved), approved);
   }
   assert.ok(direct.indexOf('skoob.com.br/pt/book/122687117') > direct.indexOf('id="direct-order-status"'));
@@ -278,7 +278,7 @@ test('configured prices render with physical-channel freight parity and accessib
   const h = await harness();
   assert.equal(h.cards.direct.price.textContent, 'R$ 39,90');
   assert.match(h.cards.direct.attributes['aria-label'], /R\$ 39,90 mais frete/);
-  assert.match(h.cards.direct.attributes['aria-label'].replace(/ /g, ' '), /preço anterior R\$ 49,99/);
+  assert.match(h.cards.direct.attributes['aria-label'].replace(/ /g, ' '), /preço anterior R\$ 49,90/);
   assert.match(h.cards.direct.attributes['aria-label'], /R\$ 10 OFF/);
 
   assert.equal(h.cards.uiclap.price.textContent, 'R$ 45,90');
@@ -291,12 +291,13 @@ test('configured prices render with physical-channel freight parity and accessib
 });
 
 test('discount and previous price come from configuration and never overstate the saving', async () => {
-  assert.equal(config.channels.direct.reference_amount_cents, 4999);
+  assert.equal(config.channels.direct.reference_amount_cents, 4990);
   const h = await harness();
-  assert.equal(h.ids['direct-previous-price'].textContent.replace(/ /g, ' '), 'R$ 49,99');
+  assert.equal(h.ids['direct-previous-price'].textContent.replace(/ /g, ' '), 'R$ 49,90');
   assert.equal(h.ids['direct-discount'].textContent, 'R$ 10 OFF');
   assert.ok(config.channels.direct.reference_amount_cents - config.channels.direct.amount_cents >= 1000);
-  assert.doesNotMatch(source, /R\$ 49,99|R\$ 10 OFF/);
+  assert.doesNotMatch(source, /R\$ 49,9|R\$ 10 OFF/);
+  assert.match(html, /direct__previous-price">R\$ 49,90</);
 });
 
 test('curitiba freight is announced before the CEP from the configured rule', async () => {

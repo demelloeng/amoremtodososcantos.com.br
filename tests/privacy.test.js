@@ -244,7 +244,7 @@ test('direct sales remains independent from analytics', () => {
 });
 
 test('purchase and editorial anchors remain present', () => {
-  for (const text of ['Compra direta', 'R$ 49,99', 'CALCULAR FRETE', 'Comprar', 'Amazon', 'UICLAP',
+  for (const text of ['Compra direta', 'R$ 49,90', 'CALCULAR FRETE', 'Comprar', 'Amazon', 'UICLAP',
     'Clube de Autores', 'Skoob', 'FLIM', 'Manifesto', 'Política de privacidade']) {
     assert.ok(html.toLocaleLowerCase('pt-BR').includes(text.toLocaleLowerCase('pt-BR')), text);
   }
