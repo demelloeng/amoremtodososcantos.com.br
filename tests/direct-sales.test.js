@@ -39,6 +39,14 @@ function element() {
     setAttribute(name, value) { this.attributes[name] = value; }, removeAttribute() {},
     querySelector() { return element(); }};
 }
+function priceCard(channel) {
+  const card = element();
+  const price = element();
+  card.dataset.priceChannel = channel;
+  card.querySelector = selector => selector === '.card__price' ? price : null;
+  card.price = price;
+  return card;
+}
 function response(status, data) { return {ok: status >= 200 && status < 300, status, json: async () => data}; }
 async function flush() { for (let i = 0; i < 8; i++) await new Promise(resolve => setImmediate(resolve)); }
 
@@ -58,6 +66,15 @@ async function harness(active = true, options = {}) {
   const session = options.session || storage();
   const local = storage();
   const destinationRequests = [];
+  const cards = {
+    direct: ids['direct-card'],
+    amazon: priceCard('amazon'),
+    uiclap: priceCard('uiclap'),
+    clube_autores: priceCard('clube_autores')
+  };
+  cards.direct.dataset.priceChannel = 'direct';
+  cards.direct.price = element();
+  cards.direct.querySelector = selector => selector === '.card__price' ? cards.direct.price : null;
   const fetch = (url, init = {}) => {
     if (url.startsWith('https://viacep.com.br/ws/')) {
       if (!options.destinationPending) return Promise.reject(new Error('lookup unavailable'));
@@ -95,13 +112,14 @@ async function harness(active = true, options = {}) {
     this.observe = target => observers.push({callback, target, observer: this});
     this.disconnect = () => {};
   }
-  vm.runInNewContext(source, {document: {getElementById: id => ids[id], querySelectorAll: () => []},
+  vm.runInNewContext(source, {document: {getElementById: id => ids[id],
+    querySelectorAll: selector => selector === '[data-price-channel]' ? Object.values(cards) : []},
     window, fetch, Intl, Error, URLSearchParams, JSON, crypto, encodeURIComponent, CustomEvent,
     AbortController, setTimeout, clearTimeout,
     IntersectionObserver: options.noIntersectionObserver ? undefined : IntersectionObserver});
   await flush();
   const api = pending.filter(item => !item.url.endsWith('/v1/prices'));
-  return {ids, pending, opened, popupWindows, requests, session, local, flush, commerceEvents, observers, destinationRequests,
+  return {ids, cards, pending, opened, popupWindows, requests, session, local, flush, commerceEvents, observers, destinationRequests,
     respond(index, status, payload) { pending[index].resolve(response(status, payload)); },
     reject(index, error) { pending[index].reject(error); }};
 }
@@ -148,7 +166,7 @@ test('direct purchase is its own block and keeps Skoob as its review channel', (
   assert.match(direct, /skoob\.com/i);
   for (const approved of ['AGORA DÁ PRA COMPRAR DIRETO COMIGO.', 'O livro já está aqui — impresso, esperando autógrafo e endereço.',
     'Nada de esperar produzir o exemplar: confirmou o pagamento, eu preparo e posto até o próximo dia útil.',
-    'R$ 49,99 + frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
+    'R$ 49,99', 'R$ 10 OFF', '+ frete', 'Autografado + marca-páginas', 'CALCULAR FRETE']) {
     assert.ok(directText.includes(approved), approved);
   }
   assert.ok(direct.indexOf('skoob.com.br/pt/book/122687117') > direct.indexOf('id="direct-order-status"'));
@@ -175,7 +193,7 @@ test('hidden and coming soon states keep retailer alternatives usable', async ()
   assert.equal(active.ids['direct-payment-installments'].hidden, false);
   assert.equal(active.ids['direct-flow'].hidden, false);
   assert.match(active.ids['direct-payment-methods'].textContent, /Pix ou cartão/);
-  assert.match(active.ids['direct-payment-installments'].textContent, /até 2x/);
+  assert.match(active.ids['direct-payment-installments'].textContent, /até 3x/);
   for (const url of ['https://www.amazon.com.br/dp/B0HB7PR45H', 'https://loja.uiclap.com/titulo/ua200325',
     'https://clubedeautores.com.br/livro/amor-em-todos-os-cantos-2']) assert.ok(html.includes(url));
 });
@@ -251,6 +269,40 @@ test('active offer emits view_item only after first real intersection', async ()
   h.observers[0].callback([{target: h.ids['direct-card'], isIntersecting: true, intersectionRatio: 0.5}], h.observers[0].observer);
   h.observers[0].callback([{target: h.ids['direct-card'], isIntersecting: true, intersectionRatio: 1}], h.observers[0].observer);
   assert.equal(h.commerceEvents.filter(event => event.event === 'view_item').length, 1);
+  assert.equal(h.commerceEvents.find(event => event.event === 'view_item').value,
+    config.channels.direct.amount_cents / 100);
+});
+
+test('configured prices render with physical-channel freight parity and accessible labels', async () => {
+  const h = await harness();
+  assert.equal(h.cards.direct.price.textContent, 'R$ 39,90');
+  assert.match(h.cards.direct.attributes['aria-label'], /R\$ 39,90 mais frete/);
+  assert.match(h.cards.direct.attributes['aria-label'], /preço anterior R\$ 49,99/);
+  assert.match(h.cards.direct.attributes['aria-label'], /R\$ 10 OFF/);
+
+  assert.equal(h.cards.uiclap.price.textContent, 'R$ 45,90');
+  assert.match(h.cards.uiclap.attributes['aria-label'], /R\$ 45,90 mais frete/);
+  assert.equal(h.cards.clube_autores.price.textContent, 'R$ 49,99');
+  assert.match(h.cards.clube_autores.attributes['aria-label'], /R\$ 49,99 mais frete/);
+
+  assert.equal(h.cards.amazon.price.textContent, 'ou R$ 9,90');
+  assert.doesNotMatch(h.cards.amazon.attributes['aria-label'], /frete/i);
+});
+
+test('physical retailer cards show freight while the Kindle card does not', () => {
+  const alternativesAt = html.indexOf('Prefere comprar por outra plataforma?');
+  const cardFor = channel => {
+    const start = html.indexOf(`data-price-channel="${channel}"`, alternativesAt);
+    return html.slice(start, html.indexOf('</a>', start));
+  };
+  assert.match(cardFor('uiclap'), /class="card__freight"> \+ frete<\/span>/);
+  assert.match(cardFor('clube_autores'), /class="card__freight"> \+ frete<\/span>/);
+  assert.doesNotMatch(cardFor('amazon'), /card__freight|\+ frete/);
+});
+
+test('view_item has no stale hardcoded commercial value', () => {
+  assert.doesNotMatch(source, /commerce\('view_item',\s*itemFields\(quantity,\s*49\.99\)\)/);
+  assert.match(source, /prices\.direct\.amount_cents\s*\/\s*100/);
 });
 
 test('active offer measures a real viewport intersection when IntersectionObserver is unavailable', async () => {

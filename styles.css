@@ -97,6 +97,7 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .card__deal { text-align: center; margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
 .card__benefit { font-size: 13px; line-height: 1.4; font-weight: 600; max-width: 165px; margin-inline: auto; }
 .card__price { color: var(--dourado); font-weight: 800; font-size: 28px; white-space: nowrap; }
+.card__freight { color: var(--dourado); font-size: 15px; font-weight: 700; white-space: nowrap; }
 .card__cta { padding: 10px 5px; font-size: 11px; min-height: 44px; }
 .card--direct { background: var(--branco); color: var(--azul); }
 .card--direct[hidden], .card--direct [hidden] { display: none !important; }
@@ -121,9 +122,12 @@ a.card:hover { box-shadow: 0 5px 16px #202f5330; }
 .direct__copy { position: relative; z-index: 1; max-width: 70ch; margin: 0; padding: 0 32px; font-size: 16px; line-height: 1.55; }
 .direct__copy + .direct__copy { margin-top: 10px; padding-bottom: 30px; }
 .direct__commercial { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 20px 32px; background: #a04429; color: var(--branco); }
-.direct__commercial .card__deal { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0; text-align: left; }
+.direct__commercial .card__deal { align-items: flex-start; gap: 3px; margin: 0; text-align: left; }
 .card--direct .card__price { font-size: 28px; }
+.direct__previous-price { font-size: 14px; line-height: 1.2; opacity: .78; text-decoration: line-through; }
+.direct__current-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; }
 .direct__freight { font-size: 18px; font-weight: 700; }
+.direct__discount { display: inline-flex; margin-top: 3px; padding: 4px 8px; border: 1px solid currentColor; border-radius: 3px; font-size: 13px; line-height: 1; font-weight: 900; letter-spacing: .03em; }
 .direct__perks { display: flex; flex-direction: column; gap: 2px; margin-left: auto; }
 .direct__benefit { margin: 0; font-weight: 800; }
 .direct__info .direct__payment { text-align: left; font-size: 13px; line-height: 1.4; }

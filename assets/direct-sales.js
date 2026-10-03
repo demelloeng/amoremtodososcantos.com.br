@@ -195,7 +195,7 @@
       function recordView() {
         if (viewed) return;
         viewed = true;
-        commerce('view_item', itemFields(quantity, 49.99));
+        commerce('view_item', itemFields(quantity, prices.direct.amount_cents / 100));
       }
       if (typeof IntersectionObserver === 'function') {
         var observer = new IntersectionObserver(function (entries) {
@@ -232,8 +232,15 @@
       var isAmazonUnlimited = card.dataset.priceChannel === 'amazon' && item.kindle_unlimited;
       if (card.dataset.priceChannel === 'amazon') kindleUnlimited.hidden = !item.kindle_unlimited;
       card.querySelector('.card__price').textContent = (isAmazonUnlimited ? 'ou ' : '') + label;
-      card.setAttribute('aria-label', channelName(card.dataset.priceChannel) +
-        (isAmazonUnlimited ? ' — Grátis no Kindle Unlimited ou ' : ' por ') + label);
+      var channel = card.dataset.priceChannel;
+      if (channel === 'direct') {
+        card.setAttribute('aria-label', 'Compra direta por ' + label +
+          ' mais frete — preço anterior R$ 49,99 — R$ 10 OFF');
+      } else {
+        var freightLabel = channel === 'uiclap' || channel === 'clube_autores' ? ' mais frete' : '';
+        card.setAttribute('aria-label', channelName(channel) +
+          (isAmazonUnlimited ? ' — Grátis no Kindle Unlimited ou ' : ' por ') + label + freightLabel);
+      }
       if (item.amount_cents !== null) card.dataset.price = (item.amount_cents / 100).toFixed(2);
     });
     queryOrderStatus();
