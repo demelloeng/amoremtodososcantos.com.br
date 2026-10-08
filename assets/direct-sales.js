@@ -359,7 +359,8 @@
       commerce('direct_checkout_error', {error_code:code});
     }
     var body = {destination_cep: destinationCep, quantity: quotedQuantity,
-      confirmed_summary: currentSummary, idempotency_key: commercialAttempt(destinationCep)};
+      confirmed_summary: currentSummary, idempotency_key: commercialAttempt(destinationCep),
+      attribution: typeof window.fissuraMetaAttribution === 'function' ? window.fissuraMetaAttribution() : {consent:false}};
     fetch(apiBase + '/v1/checkout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
       .then(function (response) { return response.json().then(function (data) { return {status:response.status, ok:response.ok, data:data}; }); })
       .then(function (result) {
