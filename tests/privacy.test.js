@@ -255,78 +255,62 @@ test('purchase and editorial anchors remain present', () => {
 
 const metaSource = fs.readFileSync(path.join(root, 'assets/meta-analytics.js'), 'utf8');
 
-test('meta pixel is consent-gated, loaded last and never installed inline', () => {
+test('meta pixel loads from its own script, loaded last, never inline and never as Purchase', () => {
   assert.doesNotMatch(html, /fbq\(|connect\.facebook\.net/);
   const directAt = html.indexOf('<script src="assets/direct-sales.js" defer></script>');
   const metaAt = html.indexOf('<script src="assets/meta-analytics.js" defer></script>');
   assert.ok(metaAt > directAt);
   assert.match(metaSource, /979000055233966/);
-  assert.match(metaSource, /function grant\(\)/);
-  const loadAt = metaSource.indexOf('loadPixel();');
-  assert.ok(loadAt > metaSource.indexOf('function grant()'));
-  assert.equal((metaSource.match(/loadPixel\(\)/g) || []).length, 2); // definition + the single call in grant()
-});
-
-test('meta pixel sends only browser events, never Purchase or personal data', () => {
-  assert.doesNotMatch(metaSource, /'Purchase'|"Purchase"/);
-  assert.doesNotMatch(metaSource, /\b(email|cpf|cep|phone|address|access_token|checkout_url|order_id)\b/i);
   assert.match(metaSource, /ViewContent/);
   assert.match(metaSource, /InitiateCheckout/);
-  assert.doesNotMatch(metaSource, /sa_event|simpleanalytics/i);
+  assert.doesNotMatch(metaSource, /'Purchase'|"Purchase"/);
+  assert.doesNotMatch(metaSource, /(email|cpf|cep|phone|address|access_token|checkout_url|order_id)/i);
+  assert.doesNotMatch(metaSource, /sa_event|simpleanalytics|localStorage|banner/i);
 });
 
-function metaPage({ stored = null, search = '', cookies = '' } = {}) {
+function metaPage({ search = '', cookies = '' } = {}) {
   const listeners = {};
-  const fbqCalls = [];
-  const body = { children: [], appendChild(node) { this.children.push(node); } };
-  const nodes = [];
+  const calls = [];
   const window = {
     location: { search },
-    localStorage: { getItem: () => stored, setItem(k, v) { stored = v; } },
     addEventListener(type, fn) { listeners[type] = fn; }
   };
   const document = {
-    readyState: 'complete', cookie: cookies, body,
-    head: { appendChild(node) { nodes.push(node); } },
-    createElement(tag) {
-      const node = { tag, listeners: {}, remove() {}, setAttribute() {},
-        querySelector(sel) { return node[sel] || (node[sel] = { addEventListener(t, fn) { node['on' + sel] = fn; } }); } };
-      return node;
-    },
+    readyState: 'complete', cookie: cookies,
+    head: { appendChild() {} },
+    createElement() { return {}; },
     addEventListener() {}
   };
   vm.runInNewContext(metaSource, { window, document, Date: { now: () => 1700000000000 } });
-  return { window, document, listeners, fbqCalls, nodes, body, getStored: () => stored };
+  window.fbq.callMethod = (...args) => calls.push(args);
+  return { window, listeners, calls };
 }
 
-test('meta pixel does not load without consent and exposes consent=false attribution', () => {
+test('meta pixel initialises with PageView and maps commerce events without personal data', () => {
   const page = metaPage();
-  assert.equal(page.window.fbq, undefined);
-  assert.deepEqual(JSON.parse(JSON.stringify(page.window.fissuraMetaAttribution())), { consent: false });
-  page.listeners['fissura:commerce']({ detail: { event: 'view_item', item_id: 'fissura_fisico_direto', value: 49.9, quantity: 1 } });
-  assert.equal(page.window.fbq, undefined);
-});
-
-test('stored denial keeps the pixel off and shows no banner', () => {
-  const page = metaPage({ stored: 'denied' });
-  assert.equal(page.window.fbq, undefined);
-  assert.equal(page.body.children.length, 0);
-});
-
-test('stored consent loads the pixel and attribution carries only fbp/fbc', () => {
-  const page = metaPage({ stored: 'granted', search: '?fbclid=AbC', cookies: '_fbp=fb.1.1700000000000.123' });
   assert.equal(typeof page.window.fbq, 'function');
+  const queued = Array.from(page.window.fbq.queue, (args) => Array.from(args));
+  assert.deepEqual(JSON.parse(JSON.stringify(queued.slice(0, 2))),
+    [['init', '979000055233966'], ['track', 'PageView', null]]);
+  page.listeners['fissura:commerce']({ detail: { event: 'view_item', item_id: 'fissura_fisico_direto', value: 39.9, quantity: 1 } });
+  page.listeners['fissura:commerce']({ detail: { event: 'direct_checkout_created', item_id: 'fissura_fisico_direto', value: 45.8, quantity: 1, order_id: 'x' } });
+  page.listeners['fissura:commerce']({ detail: { event: 'direct_payment_confirmed', item_id: 'fissura_fisico_direto', value: 45.8 } });
+  assert.deepEqual(page.calls.map((args) => args[1]), ['ViewContent', 'InitiateCheckout']);
+});
+
+test('attribution carries only fbp/fbc', () => {
+  const page = metaPage({ search: '?fbclid=AbC', cookies: '_fbp=fb.1.1700000000000.123' });
   assert.deepEqual(JSON.parse(JSON.stringify(page.window.fissuraMetaAttribution())),
     { consent: true, fbp: 'fb.1.1700000000000.123', fbc: 'fb.1.1700000000000.AbC' });
-  assert.equal(page.body.children.length, 0);
 });
 
-test('checkout request carries meta attribution without identifiers in the idempotency attempt', () => {
+test('checkout request carries meta attribution', () => {
   assert.match(directSalesSource, /attribution: typeof window\.fissuraMetaAttribution === 'function'/);
 });
 
 test('policy declares meta pixel, conversions api and data never sent', () => {
   const normalized = policy.replace(/\s+/g, ' ');
-  for (const term of ['Meta Pixel', 'API de Conversões', '_fbp', '_fbc', 'Recusar', 'BRL',
+  for (const term of ['Meta Pixel', 'API de Conversões', '_fbp', '_fbc', 'BRL', 'Estados Unidos',
     'Nunca enviamos à Meta nome, e-mail, telefone, CPF, endereço ou CEP']) assert.ok(normalized.includes(term), term);
+  assert.doesNotMatch(policy, /Permitir|Recusar/);
 });
